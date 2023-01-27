@@ -16,9 +16,12 @@
     function get3DCoordinates(): Position {
         let ra = Radians(rightAscension);
         let dec = Radians(declination);
-        let x = distance * Math.sin(dec) * Math.cos(ra);
-        let y = distance * Math.sin(dec) * Math.sin(ra);
-        let z = distance * Math.cos(dec);
+        // let x = distance * Math.sin(dec) * Math.cos(ra);
+        // let y = distance * Math.sin(dec) * Math.sin(ra);
+        // let z = distance * Math.cos(dec) * Math.sign(dec);
+        let x = distance* Math.cos(dec)*Math.cos(ra);
+        let y = distance*Math.cos(dec)*Math.sin(ra);
+        let z = distance*Math.sin(dec);
         return [x,y,z];
     }
 </script>
