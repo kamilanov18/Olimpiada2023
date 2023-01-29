@@ -1,28 +1,34 @@
 <script lang='ts'>
 	import * as THREE from 'three';
-	import * as SC from 'svelte-cubed';
+	import { Canvas, Mesh, OrbitControls, PerspectiveCamera } from '@threlte/core';
+    import { Environment } from '@threlte/extras'
 	import Star from './../components/Star.svelte';
     import DecStar from './../components/DecStar.svelte';
     import type { PageData } from './$types';
-
     export let data: PageData;
     const stars = data.stars.data;
 </script>
 
 <style>
-    /* .demo {
-        position:relative;
-        width:100%;
-        max-width:var(--linemax);
-        height:var(--height, 300px);
-    } */
+    div {
+        position: fixed;
+	  top: 0;
+	  left: 0;
+	  width: 100%;
+	  height: 100%;
+    }
 </style>
 
-<div class="demo">
-    <SC.Canvas>
-        <SC.Mesh material={new THREE.MeshStandardMaterial({color: 0xffffff,emissive:0xffffff})} geometry={new THREE.SphereGeometry(0.01)} position={[0,0,0]}></SC.Mesh>
+<div class="canvas-container">
+<Canvas>
+        <Environment isBackground={true} ></Environment>
+        <PerspectiveCamera near={0.001} position={{x:1,y:1,z:1}}>
+            <OrbitControls enableDamping={true} dampingFactor={0.09}></OrbitControls>
+        </PerspectiveCamera>
 
-        <SC.Mesh material={new THREE.MeshStandardMaterial({color: 0xffff00,emissive:0xffff00})} geometry={new THREE.SphereGeometry(0.1)} position={[0,0,1]}></SC.Mesh>
+        <Mesh material={new THREE.MeshStandardMaterial({color: 0xffffff,emissive:0xffffff})} geometry={new THREE.SphereGeometry(0.001)} position={{x:0,y:0,z:0}}></Mesh>
+
+        <Mesh material={new THREE.MeshStandardMaterial({color: 0xffff00,emissive:0xffff00})} geometry={new THREE.SphereGeometry(0.1)} position={{x:0,y:0,z:1}}></Mesh>
 
         <Star rightAscension={[11,3,43.84]} declination={[61,45,4]} distance={81} radius={1}/>          Dubhe 81
         <Star rightAscension={[11,1,50.39]} declination={[56,22,56.4]} distance={79} radius={1}/>       Merak 79
@@ -34,10 +40,7 @@
 
         {#each stars as star}
             {console.log(star)}
-            <DecStar rightAscension={star[1]} declination={star[2]} distance={((1/star[3]))*3.26} radius={1e-3}></DecStar>
+            <DecStar rightAscension={star[1]} declination={star[2]} distance={((1/star[3]))*3.26} radius={1e-4}></DecStar>
         {/each}
-
-    	<SC.PerspectiveCamera position={[1, 1, 1]} />
-        <SC.OrbitControls></SC.OrbitControls>
-    </SC.Canvas>
+</Canvas>
 </div>

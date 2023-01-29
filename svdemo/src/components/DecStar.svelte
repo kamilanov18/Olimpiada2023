@@ -1,7 +1,6 @@
 <script lang="ts">
     import * as THREE from 'three';
-	import * as SC from 'svelte-cubed';
-	import type { Position } from 'svelte-cubed/types/common';
+	import { Mesh, type Position } from '@threlte/core'
 
     export let radius:number;
     export let rightAscension: number; // lat
@@ -22,8 +21,8 @@
         let x = distance* Math.cos(dec)*Math.cos(ra);
         let y = distance*Math.cos(dec)*Math.sin(ra);
         let z = distance*Math.sin(dec);
-        return [x,y,z];
+        return {x,y,z};
     }
 </script>
 
-<SC.Mesh position={get3DCoordinates()} geometry={new THREE.SphereGeometry(radius)}/>
+<Mesh material={new THREE.MeshStandardMaterial({color: 0xffffff,emissive:0xffffff})} position={get3DCoordinates()} geometry={new THREE.SphereGeometry(radius)}/>
