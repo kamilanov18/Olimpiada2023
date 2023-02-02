@@ -1,4 +1,4 @@
-import { mssqlConnection } from "../src/db/mssqldb";
+import { mssqlConnection } from "../../src/db/mssqldb";
 import { ConnectionPool, Request } from "mssql";
 
 describe("mssqlConnection", () => {
@@ -47,5 +47,9 @@ describe("InsertUser procedure", () => {
     //expect(selectResult.recordset[0].Password).toEqual(password);
     expect(selectResult.recordset[0].FirstName).toEqual(firstName);
     expect(selectResult.recordset[0].LastName).toEqual(lastName);
+    const deleteRequest= new Request(connection);
+    const deleteResult = await deleteRequest
+      .input("Username", username)
+      .query("DELETE FROM Users WHERE Username = @Username");
   });
 });
