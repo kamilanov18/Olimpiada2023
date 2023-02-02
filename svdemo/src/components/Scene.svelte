@@ -6,10 +6,15 @@
     import type { StarData } from 'src/types';
     import type { PageData } from '../routes/$types';
 	import { cursorPosition, isCursorVisible, targetStar} from '../stores'
+    import { tweened } from 'svelte/motion';
     
     export let data: PageData;
     let stars: StarData[] = data.stars;
     let targetedStar: StarData = {id:0, rightAscencion:0, declination:0, parallax:0, coordinates:{x:0,y:0,z:0}};
+
+    let tweenedOrbitControlTargetCoordinates = tweened<Position>({x:0,y:0,z:0}, {
+        duration:500
+    });
 
     let cursor = {
         sprite:true,
@@ -38,17 +43,15 @@
     });
 
     isCursorVisible.subscribe((val:any)=>{
-        console.log(val);
         cursor.occlude=!val
     });
 
     targetStar.subscribe((val:StarData)=>{
-        console.log(val);
         targetedStar=val;
-        orbitControls.target.x=targetedStar.coordinates.x as number;
-        orbitControls.target.y=targetedStar.coordinates.y as number;
-        orbitControls.target.z=targetedStar.coordinates.z as number;
+        tweenedOrbitControlTargetCoordinates.set(targetedStar.coordinates);
     });
+
+    tweenedOrbitControlTargetCoordinates.subscribe((val:any)=>{orbitControls.target=val})
 
 </script>
 
