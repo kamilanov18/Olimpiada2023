@@ -1,27 +1,26 @@
 <script lang="ts">
-    import * as THREE from 'three';
-	import * as SC from 'svelte-cubed';
-	import type { Position } from 'svelte-cubed/types/common';
+	import { Instance, type ThreltePointerEvent, useThrelte } from '@threlte/core';
+	import type { StarData } from 'src/types';
+    import { cursorPosition, isCursorVisible, targetStar } from '../stores'
+    export let starData: StarData;
 
-    export let radius:number;
-    export let rightAscension: [number, number, number]; // lat
-    export let declination: [number,number,number]    // lon
-    export let distance: number;
-
-    function Radians(degrees: number)
-    {
-        return degrees*Math.PI/180;
+    const onPointerEnter = (e: CustomEvent<ThreltePointerEvent>) => {
+        console.log(e)
+        console.log("vutre sum");
+        cursorPosition.set(starData.coordinates);
+        isCursorVisible.set(true);
     }
 
-    function get3DCoordinates(): Position {
-        let ra = Radians((rightAscension[0] * 15) + (rightAscension[1] * 0.25) + (rightAscension[2] * 0.004166));
-        let dec = Radians(( Math.abs(declination[0]) + (declination[1] / 60) + (declination[2] / 3600)) * Math.sign(declination[0]));
-        let x = distance * Math.sin(dec) * Math.cos(ra);
-        let y = distance * Math.sin(dec) * Math.sin(ra);
-        let z = distance * Math.cos(dec);
-        return [x,y,z];
+    const onPointerLeave = (e: CustomEvent<ThreltePointerEvent>) => {
+
+        console.log("navun sum");
+        isCursorVisible.set(false);
     }
 
+    const onClick = (e: CustomEvent<ThreltePointerEvent>) => {
+        console.log("kliknah");
+        targetStar.set(starData);
+    }
 </script>
 
-<SC.Mesh position={get3DCoordinates()} geometry={new THREE.SphereGeometry(radius)}/>
+<Instance on:pointerleave={onPointerLeave} on:pointerenter={onPointerEnter} on:click={onClick}  color={0xffffff} position={starData.coordinates} />
