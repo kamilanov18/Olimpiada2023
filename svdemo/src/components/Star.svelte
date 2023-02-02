@@ -5,23 +5,22 @@
     export let starData: StarData;
 
     const onPointerEnter = (e: CustomEvent<ThreltePointerEvent>) => {
-        console.log(e)
-        console.log("vutre sum");
+        console.log("Pointer enter: "+starData.id);
         cursorPosition.set(starData.coordinates);
         isCursorVisible.set(true);
+        document.body.style.cursor = 'pointer';
     }
 
     const onPointerLeave = (e: CustomEvent<ThreltePointerEvent>) => {
-
-        console.log("navun sum");
+        console.log("Pointer leave: "+starData.id);
         isCursorVisible.set(false);
+        document.body.style.cursor = 'auto';
     }
 
     const onClick = (e: CustomEvent<ThreltePointerEvent>) => {
-        console.log("kliknah");
+        console.log("Pointer click: "+starData.id);
         targetStar.set(starData);
     }
 </script>
-
 
 <Instance on:pointerleave={onPointerLeave} on:pointerenter={onPointerEnter} on:click={onClick}  color={0xffffff} position={starData.coordinates} />

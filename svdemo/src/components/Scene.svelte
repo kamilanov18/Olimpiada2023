@@ -1,6 +1,6 @@
 <script lang='ts'>
     import * as THREE from 'three';
-    import { OrbitControls, PerspectiveCamera, T, InstancedMesh, type Position, Object3D } from '@threlte/core';
+    import { OrbitControls, PerspectiveCamera, T, InstancedMesh, type Position, Object3D, useThrelte } from '@threlte/core';
     import { Environment, HTML } from '@threlte/extras';
     import Star from '../components/Star.svelte';
     import type { StarData } from 'src/types';
@@ -12,17 +12,19 @@
     let stars: StarData[] = data.stars;
     let targetedStar: StarData = {id:0, rightAscencion:0, declination:0, parallax:0, coordinates:{x:0,y:0,z:0}};
 
+    let testCur: THREE.Object3D = new THREE.Sprite( new THREE.SpriteMaterial( { 
+        map: new THREE.TextureLoader().load( 'cursor.png' ), 
+        color: 0xffffff } 
+    ) );
+    
+    testCur.scale.set(0.0007,0.001,1);
+    testCur.position.set(0,0,0);
+    const { scene } = useThrelte();
+    scene.add(testCur);
+
     let tweenedOrbitControlTargetCoordinates = tweened<Position>({x:0,y:0,z:0}, {
         duration:500
     });
-
-    let cursor = {
-        sprite:true,
-        scale:0.00005,
-        transform:true,
-        position: {x:0,y:0,z:0},
-        occlude:true
-    };
 
     let orbitControls = {
         enableDamping:true,
@@ -37,13 +39,11 @@
     }
 
     cursorPosition.subscribe((val:any)=>{
-        cursor.position.x=val.x as number;
-        cursor.position.y=val.y as number;
-        cursor.position.z=val.z as number;
+        testCur.position.set(val.x,val.y,val.z);
     });
 
     isCursorVisible.subscribe((val:any)=>{
-        cursor.occlude=!val
+        testCur.visible=val;
     });
 
     targetStar.subscribe((val:StarData)=>{
@@ -51,16 +51,10 @@
         tweenedOrbitControlTargetCoordinates.set(targetedStar.coordinates);
     });
 
-    tweenedOrbitControlTargetCoordinates.subscribe((val:any)=>{orbitControls.target=val})
-
+    tweenedOrbitControlTargetCoordinates.subscribe((val:any)=>{
+        orbitControls.target=val
+    });
 </script>
-
-<!-- svelte-ignore a11y-missing-attribute -->
-<Object3D frustumCulled={false}>
-    <HTML {...cursor} >
-      <img  draggable="false" src="cursor.png">
-    </HTML>
-</Object3D>
 
 <T.GridHelper />
 <Environment path ='./' files={'black_background.png'} isBackground={true} />
