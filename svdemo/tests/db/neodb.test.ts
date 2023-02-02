@@ -89,10 +89,10 @@ beforeAll(async () => {
     });
 
     it("should be able to delete the created graph", async () => {
-        const session = driver.session({ database: 'neo4j' });
+        
         async function deleteGraph(personName:string){
             
-        
+            const session = driver.session({ database: 'neo4j' });
             try {
             const deleteQuery = `MATCH (p1:Person { name: $personName })
                                 DETACH DELETE p1`;
@@ -112,11 +112,13 @@ beforeAll(async () => {
             expect(checkResult.records.length).toEqual(0);
             } catch (error) {
             console.error(`Something went wrong: ${error}`);
+            }finally{
+               await session.close();
             }
         }
 
-        //deleteGraph(person1Name);
-        deleteGraph(person2Name);
+        await deleteGraph(person1Name);
+       await deleteGraph(person2Name);
 
       });
       
