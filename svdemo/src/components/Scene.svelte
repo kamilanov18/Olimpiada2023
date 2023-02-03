@@ -1,27 +1,18 @@
 <script lang='ts'>
     import * as THREE from 'three';
-    import { OrbitControls, PerspectiveCamera, T, InstancedMesh, type Position, Object3D, useThrelte } from '@threlte/core';
-    import { Environment, HTML } from '@threlte/extras';
+    import { OrbitControls, PerspectiveCamera, T, InstancedMesh, type Position } from '@threlte/core';
+    import { Environment } from '@threlte/extras';
     import Star from '../components/Star.svelte';
     import type { StarData } from 'src/types';
     import type { PageData } from '../routes/$types';
-	import { cursorPosition, isCursorVisible, targetStar} from '../stores'
+	import { targetStar} from '../stores'
     import { tweened } from 'svelte/motion';
+	import HoverCursor from './HoverCursor.svelte';
     
     export let data: PageData;
     let stars: StarData[] = data.stars;
     let targetedStar: StarData = {id:0, rightAscencion:0, declination:0, parallax:0, coordinates:{x:0,y:0,z:0}};
-
-    let testCur: THREE.Object3D = new THREE.Sprite( new THREE.SpriteMaterial( { 
-        map: new THREE.TextureLoader().load( 'cursor.png' ), 
-        color: 0xffffff } 
-    ) );
     
-    testCur.scale.set(0.0007,0.001,1);
-    testCur.position.set(0,0,0);
-    const { scene } = useThrelte();
-    scene.add(testCur);
-
     let tweenedOrbitControlTargetCoordinates = tweened<Position>({x:0,y:0,z:0}, {
         duration:500
     });
@@ -38,14 +29,6 @@
         lookAt: targetedStar.coordinates,
     }
 
-    cursorPosition.subscribe((val:any)=>{
-        testCur.position.set(val.x,val.y,val.z);
-    });
-
-    isCursorVisible.subscribe((val:any)=>{
-        testCur.visible=val;
-    });
-
     targetStar.subscribe((val:StarData)=>{
         targetedStar=val;
         tweenedOrbitControlTargetCoordinates.set(targetedStar.coordinates);
@@ -56,6 +39,7 @@
     });
 </script>
 
+<HoverCursor />
 <T.GridHelper />
 <Environment path ='./' files={'black_background.png'} isBackground={true} />
 
