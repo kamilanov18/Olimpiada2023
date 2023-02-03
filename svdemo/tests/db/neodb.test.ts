@@ -1,6 +1,5 @@
 import { neo4jSession } from "../../src/db/neodb";
 import { Driver, Session } from "neo4j-driver";
-import  v1  from "neo4j-driver";
 describe("neo4jSession", () => {
     let driver:Driver;
 

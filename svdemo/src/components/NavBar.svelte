@@ -19,19 +19,29 @@
 		Form
 	} from 'sveltestrap/src';
 
-	export let open = false;
+  //register
+	 let isRegisterOpen = false;
 
-	const toggle = () => {
-		open = !open;
+	const toggleRegister = () => {
+		isRegisterOpen = !isRegisterOpen;
 	};
 
-	let isOpen = false;
-	let isLoggedIn = false;
 
+//login
+  let isLoginOpen = false;
+
+	const toggleIsLoged = () => {
+		isLoginOpen = !isLoginOpen;
+	};
+
+  //isHamburger
+	let isOpen = false;
 	function handleUpdate(event: any) {
 		isOpen = event.detail.isOpen;
 	}
 
+  //logout
+	let isLoggedIn = false;
 	function toggleLogin() {
 		isLoggedIn = !isLoggedIn;
 	}
@@ -49,20 +59,24 @@
 		</Nav>
 		<Nav navbar class="ml-auto">
 			{#if !isLoggedIn}
+
+      <!-------------REGISTER------------->
+      <div class="d-grid gap-2 d-md-flex">
 				<div>
-					<Button color="light" outline on:click={toggle}>Login</Button>
-					<Modal isOpen={open} {toggle}>
-						<ModalHeader {toggle}>Login form</ModalHeader>
+					<Button  class="me-md-2" color="light" outline on:click={toggleRegister}>Register</Button>
+					<Modal isOpen={isRegisterOpen} toggle={toggleRegister}>
+            <Form method="post" action="/register">
+						<ModalHeader toggle={toggleRegister}>Register form</ModalHeader>
 						<ModalBody>
-							<Form>
+							
 								<InputGroup>
 									<InputGroupText>📧</InputGroupText>
-									<Input type="email" name="email" id="exampleEmail" placeholder="Email" />
+									<Input type="email" name="email" id="exampleEmail" placeholder="Email" required />
 								</InputGroup>
 								<br />
 								<InputGroup>
 									<InputGroupText>@</InputGroupText>
-									<Input type="text" placeholder="Username" />
+									<Input type="text" name="username" placeholder="Username" required />
 								</InputGroup>
                 <br />
 								<InputGroup>
@@ -72,23 +86,61 @@
 										name="password"
 										id="examplePassword"
 										placeholder="Password"
+                    required
 									/>
 								</InputGroup>
                 <br/>
                 <InputGroup>
                   
-									<Input style="border-radius: 5px;" type="text" placeholder="First Name" />
+									<Input style="border-radius: 5px;" type="text" name="firstName" placeholder="First Name" required />
                   <div style="width: 5%;"></div>
-                  <Input style="border-radius: 5px;" type="text" placeholder="Last Name" />
+                  <Input style="border-radius: 5px;" type="text" name="lastName" placeholder="Last Name" required />
                 </InputGroup>
-							</Form>
+							
 						</ModalBody>
 						<ModalFooter>
-							<Button color="primary" on:click={toggleLogin}>Submit</Button>
-							<Button color="secondary" on:click={toggle}>Cancel</Button>
+							<Button color="primary" type="submit" >Submit</Button>
+							<Button color="secondary" on:click={toggleRegister}>Cancel</Button>
 						</ModalFooter>
+          </Form>
 					</Modal>
 				</div>
+      </div>
+
+        <!-------------/REGISTER------------->
+<!-------------LOGIN------------->
+        <div>
+					<Button color="light" outline on:click={toggleIsLoged}>Login</Button>
+					<Modal isOpen={isLoginOpen} toggle={toggleIsLoged}>
+            <Form method="post" action="/login">
+						<ModalHeader toggle={toggleIsLoged}>Login form</ModalHeader>
+						<ModalBody>
+								<InputGroup>
+									<InputGroupText>@</InputGroupText>
+									<Input type="text" name="username" placeholder="Username" required />
+								</InputGroup>
+                <br />
+								<InputGroup>
+									<InputGroupText>🔒</InputGroupText>
+									<Input
+										type="password"
+										name="password"
+										id="examplePassword"
+										placeholder="Password"
+                    required
+									/>
+								</InputGroup>
+							
+						</ModalBody>
+						<ModalFooter>
+							<Button color="primary" type="submit" >Submit</Button>
+							<Button color="secondary" on:click={toggleIsLoged}>Cancel</Button>
+						</ModalFooter>
+          </Form>
+					</Modal>
+				</div>
+
+        <!-------------/LOGIN------------->
 			{:else}
 				<NavItem>
 					<NavLink href="#" on:click={toggleLogin}>Logout</NavLink>
