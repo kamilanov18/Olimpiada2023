@@ -1,9 +1,10 @@
-import type { Position } from '@threlte/core';
-import type { PageServerLoad  } from './$types';
-import type { StarData } from 'src/types';
+import { json } from "@sveltejs/kit";
+import type { Position } from "@threlte/core";
+import type { StarData } from "src/types";
+import type { RequestHandler } from "./$types";
 
 function degToRad(degrees: number):number {
-  return degrees*Math.PI/180;
+    return degrees*Math.PI/180;
 }
 
 function get3DCoordinates(rightAscension: number,declination: number,parallax: number): Position/*[number,number,number]*/ {
@@ -16,13 +17,14 @@ function get3DCoordinates(rightAscension: number,declination: number,parallax: n
   return {x,y,z};
 }
 
-export const load =  ( async () => {
-  const res = await fetch("https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+10+source_id,ra,dec,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax>0.1+ORDER+BY+parallax+DESC", {
+async function getStarData(query:string): Promise<StarData[]> {
+  const res = await fetch(`https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=${query}`, {
     method: 'GET',
     headers: {
       'content-type': 'application/json'
     }
   });
+  console.log(res.status);
   const json = await res.json();
   const stars: StarData[] = [];
   
@@ -38,8 +40,12 @@ export const load =  ( async () => {
     stars.push(star);
   });
 
-  return {stars};
-  
-}) satisfies PageServerLoad;
+  return stars;
+}
 
+export const GET = ( async({ url }) => {
+    const query = url.searchParams.get('query') as string;
+    const stars = await getStarData(query);
+    return json(stars);
 
+}) satisfies RequestHandler;
