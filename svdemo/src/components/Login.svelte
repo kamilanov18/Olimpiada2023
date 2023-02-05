@@ -23,7 +23,7 @@
 <div>
     <Button color="light" outline on:click={toggleIsLoged}>Login</Button>
     <Modal isOpen={isLoginOpen} toggle={toggleIsLoged}>
-<Form method="post" action="/login">
+<Form method="post" action="/login?/login">
         <ModalHeader toggle={toggleIsLoged}>Login form</ModalHeader>
         <ModalBody>
                 <InputGroup>

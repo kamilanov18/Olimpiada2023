@@ -1,6 +1,8 @@
 <script lang="ts">
 	import Login from '../components/Login.svelte';
 	import Register from '../components/Register.svelte';
+	import { invalidateAll } from '$app/navigation'
+	import { applyAction, enhance } from '$app/forms'
 import {
 		Collapse,
 		Navbar,
@@ -9,20 +11,20 @@ import {
 		Nav,
 		NavItem,
 		NavLink,
-		Styles
+		Styles,
+		Button
 	} from 'sveltestrap/src';
+	import { page } from '$app/stores'
 
+	console.log($page.data.user);
+	
   //isHamburger
 	let isOpen = false;
 	function handleUpdate(event: any) {
 		isOpen = event.detail.isOpen;
 	}
 
-  //logout
-	let isLoggedIn = false;
-	function toggleLogin() {
-		isLoggedIn = !isLoggedIn;
-	}
+
 </script>
 
 <Styles />
@@ -36,7 +38,7 @@ import {
 			</NavItem>
 		</Nav>
 		<Nav navbar class="ml-auto">
-			{#if !isLoggedIn}
+{#if !$page.data.user}
 
       <!-------------REGISTER------------->
 
@@ -44,10 +46,18 @@ import {
         <!-------------/REGISTER------------->
 
       <Login></Login>
-
-			{:else}
+{/if}
+{#if $page.data.user}
 				<NavItem>
-					<NavLink href="#" on:click={toggleLogin}>Logout</NavLink>
+					<form method="POST" action="/logout" use:enhance={() => {
+						return async ({ result }) => {
+							invalidateAll()
+							await applyAction(result)
+						}
+					}} >
+						<Button color="light" type="submit" outline >Logout</Button>
+					</form>
+					
 				</NavItem>
 			{/if}
 		</Nav>

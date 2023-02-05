@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Login from '../components/Login.svelte';
 import {
 		Button,
 		Modal,

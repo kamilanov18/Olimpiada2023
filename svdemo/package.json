@@ -17,7 +17,9 @@
 		"@sveltejs/kit": "^1.0.0",
 		"@threlte/core": "^5.0.8",
 		"@threlte/preprocess": "^0.0.2",
+		"@types/jquery": "^3.5.16",
 		"@types/three": "^0.146.0",
+		"@types/uuid": "^9.0.0",
 		"@typescript-eslint/eslint-plugin": "^5.45.0",
 		"@typescript-eslint/parser": "^5.45.0",
 		"eslint": "^8.28.0",
@@ -50,6 +52,7 @@
 		"svelte-cubed": "^0.2.1",
 		"svelte-trois": "^0.0.1",
 		"sveltestrap": "^5.10.0",
-		"ts-jest": "^29.0.5"
+		"ts-jest": "^29.0.5",
+		"uuid": "^9.0.0"
 	}
 }

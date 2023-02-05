@@ -1,6 +1,6 @@
 import { mssqlConnection } from "../../src/db/mssqldb";
 import { ConnectionPool, Request } from "mssql";
-
+import {v4 as uuidv4} from 'uuid';
 describe("mssqlConnection", () => {
   it("should return a valid connection", async () => {
     const connection = await mssqlConnection();
@@ -26,13 +26,14 @@ describe("InsertUser procedure", () => {
     const password = "test-password";
     const firstName = "Test";
     const lastName = "User";
-
+    const uuid=uuidv4();
     const result = await request
       .input("Username", username)
       .input("Email", email)
       .input("Password", password)
       .input("FirstName", firstName)
       .input("LastName", lastName)
+      .input("UserAuthToken",uuid)
       .execute("InsertUser");
 
     expect(result.returnValue).toEqual(0);
@@ -47,6 +48,7 @@ describe("InsertUser procedure", () => {
     //expect(selectResult.recordset[0].Password).toEqual(password);
     expect(selectResult.recordset[0].FirstName).toEqual(firstName);
     expect(selectResult.recordset[0].LastName).toEqual(lastName);
+    expect(selectResult.recordset[0].UserAuthToken).toEqual(uuid);
     const deleteRequest= new Request(connection);
     const deleteResult = await deleteRequest
       .input("Username", username)

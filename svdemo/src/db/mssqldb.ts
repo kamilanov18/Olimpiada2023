@@ -3,7 +3,6 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 export const mssqlConnection = () => {
-    console.log(process.env.SQL_SERVER_HOST);
   const config :config = {
     user: process.env.SQL_SERVER_USER,
     password: process.env.SQL_SERVER_PASSWORD,

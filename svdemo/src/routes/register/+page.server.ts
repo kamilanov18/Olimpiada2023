@@ -2,15 +2,13 @@ import { json } from '@sveltejs/kit';
 import { mssqlConnection } from '../../db/mssqldb';
 import { Request } from 'mssql';
 import type { Action, Actions,PageServerLoad  } from './$types';
-import { fail, redirect } from '@sveltejs/kit';
-import { error } from '@sveltejs/kit';
-
-
-
+import { fail } from '@sveltejs/kit';
+import {v4 as uuidv4} from 'uuid';
 
 
 const register: Action = async ({ request }) => {
 	const connection = await mssqlConnection();
+
 	const requestDB = new Request(connection);
 	const checkUsernameRequest = new Request(connection);
 	const checkEmailRequest = new Request(connection);
@@ -25,11 +23,11 @@ const register: Action = async ({ request }) => {
 
 	const checkUsernameExists = await checkUsernameRequest
 		.input('Username', username)
-		.query('SELECT *  FROM Users WHERE Username = @Username');
+		.query('SELECT Username  FROM Users WHERE Username = @Username');
 
 	const checkEmailExists = await checkEmailRequest
 		.input('Email', email)
-		.query('SELECT * FROM Users WHERE Email = @Email');
+		.query('SELECT Email FROM Users WHERE Email = @Email');
 
 	console.log(checkUsernameExists.recordset.length);
 	console.log(checkEmailExists.recordset.length);
@@ -47,15 +45,11 @@ const register: Action = async ({ request }) => {
 			.input('Password', pass)
 			.input('FirstName', fname)
 			.input('LastName', lname)
+			.input('UserAuthToken',uuidv4())
 			.execute('InsertUser');
 
 		console.log('result from query: ');
 		console.log(result);
-		console.log(email);
-		console.log(username);
-		console.log(pass);
-		console.log(fname);
-		console.log(lname);
 	} catch (err) {
 		console.error(err);
 		return json('an error occured');
@@ -63,7 +57,7 @@ const register: Action = async ({ request }) => {
 		connection.close();
 	}
 
-	return fail(303, { user: false });
+	return fail(302, { user: false });
 };
 
 
