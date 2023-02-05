@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Instance, type ThreltePointerEvent, useThrelte } from '@threlte/core';
+	import { Instance, type ThreltePointerEvent, useThrelte, PointLight } from '@threlte/core';
 	import type { StarData } from 'src/types';
     import { cursorPosition, isCursorVisible, targetStar } from '../stores'
     export let starData: StarData;

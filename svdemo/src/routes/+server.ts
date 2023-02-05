@@ -3,17 +3,16 @@ import type { Position } from "@threlte/core";
 import type { StarData } from "src/types";
 import type { RequestHandler } from "./$types";
 
-function degToRad(degrees: number):number {
-    return degrees*Math.PI/180;
-}
-
 function get3DCoordinates(rightAscension: number,declination: number,parallax: number): Position/*[number,number,number]*/ {
-  const distance:number = ((1/parallax))*3.26;
-  const ra = degToRad(rightAscension);
-  const dec = degToRad(declination);
-  const x = distance* Math.cos(dec)*Math.cos(ra);
-  const y = distance*Math.cos(dec)*Math.sin(ra);
-  const z = distance*Math.sin(dec);
+  const theta = (90 - declination) * Math.PI / 180;
+  const phi = rightAscension * Math.PI / 180;
+  const d = (1 / parallax)*3.26;
+  const r = d;
+
+  const x = r * Math.sin(theta) * Math.cos(phi);
+  const z = r * Math.sin(theta) * Math.sin(phi);
+  const y = r * Math.cos(theta);
+
   return {x,y,z};
 }
 
