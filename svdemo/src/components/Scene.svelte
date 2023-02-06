@@ -31,26 +31,25 @@
 
     targetStar.subscribe(async (val:StarData)=>{
         if(val.coordinates.x==0&&val.coordinates.y==0&&val.coordinates.z==0) return;
+
         targetedStar=val;
         tweenedOrbitControlTargetCoordinates.set(targetedStar.coordinates);
-
-        // SELECT * FROM gaia_dr2.gaia_source
-        // WHERE 1=CONTAINS(POINT( 'ICRS', gaia_source.ra, gaia_source.dec), CIRCLE('ICRS', ra_center, dec_center, radius))
-
-        //ORDER BY SQRT(POWER(gaia_source.ra - ra_center, 2) + POWER(gaia_source.dec - dec_center, 2))
-        // let factor = targetedStar.parallax/2;
         
         let parallaxLowerArc = targetedStar.parallax-(targetedStar.parallax/4);
         let parallaxHigherArc = targetedStar.parallax+(targetedStar.parallax/3);
 
         console.log("parallax: "+targetedStar.parallax);
-        let factor = parallaxLowerArc/parallaxHigherArc;
+        let factor = parallaxHigherArc/parallaxLowerArc;
         if(factor*20>90)
             factor=4.5;
+
         console.log(factor);
-        let figureDegrees = 20*factor;
+        let figureDegrees = 0.5*targetedStar.parallax*factor;
+        if(figureDegrees>90)
+            figureDegrees=90;
+            
         console.log("circle degrees:"+figureDegrees);
-        let q1 = `SELECT+TOP+2000+source_id,ra,dec,parallax+FROM+gaiadr3.gaia_source+WHERE+1=CONTAINS(POINT(ra,dec),CIRCLE(${targetedStar.rightAscencion},${targetedStar.declination},${figureDegrees}))+AND+parallax+BETWEEN+${parallaxLowerArc}+AND+${parallaxHigherArc}`;
+        let q1 = `SELECT+source_id,ra,dec,parallax+FROM+gaiadr3.gaia_source+WHERE+1=CONTAINS(POINT(ra,dec),CIRCLE(${targetedStar.rightAscencion},${targetedStar.declination},${figureDegrees}))+AND+parallax+BETWEEN+${parallaxLowerArc}+AND+${parallaxHigherArc}`;
         const res = await fetch(`http://localhost:5173?query=${q1}`,{method:'GET'});
         stars = await res.json();
         console.log(stars.length);
@@ -60,10 +59,6 @@
         orbitControls.target=val
     });
 </script>
-
-<form action="GET">
-    <input name="query">
-</form>
 
 <HoverCursor />
 <T.GridHelper />
