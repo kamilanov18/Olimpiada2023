@@ -35,21 +35,33 @@
         targetedStar=val;
         tweenedOrbitControlTargetCoordinates.set(targetedStar.coordinates);
         
-        let parallaxLowerArc = targetedStar.parallax-(targetedStar.parallax/4);
-        let parallaxHigherArc = targetedStar.parallax+(targetedStar.parallax/3);
+        console.log('Stellar parallax: '+targetedStar.parallax);
 
-        console.log("parallax: "+targetedStar.parallax);
+        if(targetedStar.parallax>100) return;
+        // let parallaxLowerArc = targetedStar.parallax-(targetedStar.parallax/4);
+        // let parallaxHigherArc = targetedStar.parallax+(targetedStar.parallax/3);
+        let parallaxLowerArc = targetedStar.parallax/(1-0.02*targetedStar.parallax);
+        let parallaxHigherArc = targetedStar.parallax/(1+0.02*targetedStar.parallax);
+
+        console.log('Upper arc parallax: '+parallaxHigherArc);
+        console.log('Stellar parallax: '+targetedStar.parallax);
+        console.log('Lower arc parallax: '+parallaxLowerArc);
+
         let factor = parallaxHigherArc/parallaxLowerArc;
-        if(factor*20>90)
-            factor=4.5;
-
         console.log(factor);
-        let figureDegrees = 0.5*targetedStar.parallax*factor;
-        if(figureDegrees>90)
-            figureDegrees=90;
-            
-        console.log("circle degrees:"+figureDegrees);
-        let q1 = `SELECT+source_id,ra,dec,parallax+FROM+gaiadr3.gaia_source+WHERE+1=CONTAINS(POINT(ra,dec),CIRCLE(${targetedStar.rightAscencion},${targetedStar.declination},${figureDegrees}))+AND+parallax+BETWEEN+${parallaxLowerArc}+AND+${parallaxHigherArc}`;
+
+        // let figureDegrees = 1.3*targetedStar.parallax*factor;
+        let figureDegrees = targetedStar.parallax*factor;
+        console.log(figureDegrees);
+        if(figureDegrees>90) figureDegrees=90;
+
+        if(parallaxLowerArc<0)
+        {
+            parallaxLowerArc=767;
+            figureDegrees=70;
+        }
+
+        let q1 = `SELECT+source_id,ra,dec,parallax+FROM+gaiadr3.gaia_source_lite+WHERE+1=CONTAINS(POINT(ra,dec),CIRCLE(${targetedStar.rightAscencion},${targetedStar.declination},${figureDegrees}))+AND+parallax+BETWEEN+${parallaxHigherArc}+AND+${parallaxLowerArc}`;
         const res = await fetch(`http://localhost:5173?query=${q1}`,{method:'GET'});
         stars = await res.json();
         console.log(stars.length);
