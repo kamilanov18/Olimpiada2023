@@ -39,17 +39,18 @@
 
         //ORDER BY SQRT(POWER(gaia_source.ra - ra_center, 2) + POWER(gaia_source.dec - dec_center, 2))
         // let factor = targetedStar.parallax/2;
-        let factor = targetedStar.parallax;
         
-        console.log("parallax: "+targetedStar.parallax);
-        console.log(factor);
+        let parallaxLowerArc = targetedStar.parallax-(targetedStar.parallax/4);
+        let parallaxHigherArc = targetedStar.parallax+(targetedStar.parallax/3);
 
+        console.log("parallax: "+targetedStar.parallax);
+        let factor = parallaxLowerArc/parallaxHigherArc;
         if(factor*20>90)
             factor=4.5;
         console.log(factor);
-        let boxConeDegrees = 40;//*factor;
-        let q1 = `SELECT+TOP+2000+source_id,ra,dec,parallax+FROM+gaiadr3.gaia_source+WHERE+1=CONTAINS(POINT(ra,dec),BOX(${targetedStar.rightAscencion},${targetedStar.declination},${boxConeDegrees},${boxConeDegrees}))+AND+parallax+BETWEEN+4+AND+5`;
-        // let q1 = `SELECT+TOP+2000+source_id,ra,dec,parallax+FROM+gaiadr3.gaia_source+WHERE+DISTANCE(POINT(${targetedStar.rightAscencion},${targetedStar.declination}),POINT(ra,dec))<=2+AND+parallax+BETWEEN+${targetedStar.parallax-2}+AND+${targetedStar.parallax+2}`
+        let figureDegrees = 20*factor;
+        console.log("circle degrees:"+figureDegrees);
+        let q1 = `SELECT+TOP+2000+source_id,ra,dec,parallax+FROM+gaiadr3.gaia_source+WHERE+1=CONTAINS(POINT(ra,dec),CIRCLE(${targetedStar.rightAscencion},${targetedStar.declination},${figureDegrees}))+AND+parallax+BETWEEN+${parallaxLowerArc}+AND+${parallaxHigherArc}`;
         const res = await fetch(`http://localhost:5173?query=${q1}`,{method:'GET'});
         stars = await res.json();
         console.log(stars.length);
