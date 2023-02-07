@@ -34,16 +34,16 @@
         if(val.coordinates.x==0&&val.coordinates.y==0&&val.coordinates.z==0) return;
         targetedStar=val;
         tweenedOrbitControlTargetCoordinates.set(targetedStar.coordinates);
-        let query;
-        let parallaxLowerArc = targetedStar.parallax/(1-0.02*targetedStar.parallax);
-        let parallaxHigherArc = targetedStar.parallax/(1+0.02*targetedStar.parallax);
+        let query,sizeCoefficient=1.5;
+        let parallaxLowerArc = targetedStar.parallax/(1-(sizeCoefficient/100)*targetedStar.parallax);
+        let parallaxHigherArc = targetedStar.parallax/(1+(sizeCoefficient/100)*targetedStar.parallax);
 
         console.log('Upper arc parallax: '+parallaxHigherArc);
         console.log('Stellar parallax: '+targetedStar.parallax);
         console.log('Lower arc parallax: '+parallaxLowerArc);
 
         let factor = parallaxHigherArc/parallaxLowerArc;
-        let figureDegrees = 2*targetedStar.parallax*factor;
+        let figureDegrees = sizeCoefficient*targetedStar.parallax*factor;
 
         if(figureDegrees>90) figureDegrees=90;
 
@@ -58,8 +58,9 @@
             figureDegrees=70;
         }
 
+        console.log("degrees: "+figureDegrees);
         
-        if(targetedStar.parallax>80)
+        if(targetedStar.parallax>110)
         {
             query = 'SELECT+TOP+1000+source_id,ra,dec,parallax+FROM+gaiadr3.gaia_source_lite+WHERE+parallax>0.1+ORDER+BY+parallax+DESC';
         } else {
