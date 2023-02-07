@@ -8,6 +8,7 @@
 	import { targetStar} from '../stores'
     import { tweened } from 'svelte/motion';
 	import HoverCursor from './HoverCursor.svelte';
+	import TargetCursor from './TargetCursor.svelte';
     
     export let data: PageData;
     let stars: StarData[] = data.stars;
@@ -46,7 +47,7 @@
 
         if(figureDegrees>90) figureDegrees=90;
 
-        if(targetedStar.parallax>20)
+        else if(targetedStar.parallax>20)
         {
             figureDegrees=30;
             parallaxLowerArc=767;
@@ -58,8 +59,12 @@
         }
 
         
-        
-        query = `SELECT+source_id,ra,dec,parallax+FROM+gaiadr3.gaia_source_lite+WHERE+1=CONTAINS(POINT(ra,dec),CIRCLE(${targetedStar.rightAscencion},${targetedStar.declination},${figureDegrees}))+AND+parallax+BETWEEN+${parallaxHigherArc}+AND+${parallaxLowerArc}`;
+        if(targetedStar.parallax>80)
+        {
+            query = 'SELECT+TOP+1000+source_id,ra,dec,parallax+FROM+gaiadr3.gaia_source_lite+WHERE+parallax>0.1+ORDER+BY+parallax+DESC';
+        } else {
+            query = `SELECT+source_id,ra,dec,parallax+FROM+gaiadr3.gaia_source_lite+WHERE+1=CONTAINS(POINT(ra,dec),CIRCLE(${targetedStar.rightAscencion},${targetedStar.declination},${figureDegrees}))+AND+parallax+BETWEEN+${parallaxHigherArc}+AND+${parallaxLowerArc}`;
+        }
         
         const res = await fetch(`http://localhost:5173?query=${query}`,{method:'GET'});
         stars = await res.json();
@@ -72,6 +77,7 @@
 </script>
 
 <HoverCursor />
+<TargetCursor />
 <T.GridHelper />
 <Environment path ='./' files={'black_background.png'} isBackground={true} />
 

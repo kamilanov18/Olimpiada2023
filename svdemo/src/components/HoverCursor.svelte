@@ -14,8 +14,8 @@
         ) ); 
     
         hoverCursor.name="hoverCursor";
+        hoverCursor.scale.set(0.07,0.1,1);
         // hoverCursor.scale.set(0.0007,0.001,1);
-        hoverCursor.scale.set(0.0007,0.001,1);
         hoverCursor.position.set(0,0,0);
             
         scene.add(hoverCursor);
