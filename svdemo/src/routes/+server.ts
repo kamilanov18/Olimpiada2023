@@ -6,8 +6,8 @@ import type { RequestHandler } from "./$types";
 function get3DCoordinates(rightAscension: number,declination: number,parallax: number): Position/*[number,number,number]*/ {
   const theta = (90 - declination) * Math.PI / 180;
   const phi = rightAscension * Math.PI / 180;
-  // const d = (1 / (parallax/1000));
-  const d = (1 / (parallax));
+  const d = (1 / (parallax/1000));
+  // const d = (1 / (parallax));
   const r = d;
 
   const x = r * Math.sin(theta) * Math.cos(phi);
