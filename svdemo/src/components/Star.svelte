@@ -23,4 +23,4 @@
     }
 </script>
 
-<Instance on:pointerleave={onPointerLeave} on:pointerenter={onPointerEnter} on:click={onClick}  color={0xffffff} position={starData.coordinates} />
+<Instance on:pointerleave={onPointerLeave} on:pointerenter={onPointerEnter} on:click={onClick}  color={starData.pseudocolor ?? 0xffffff} position={starData.coordinates} />

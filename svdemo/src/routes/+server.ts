@@ -17,6 +17,21 @@ function get3DCoordinates(rightAscension: number,declination: number,parallax: n
   return {x,y,z};
 }
 
+function clamp(min:number,max:number,number:number):number{
+    if(number>max)
+      return max;
+    if(number<min)
+      return min;
+    return number;
+}
+
+function calculateColor(wavenumber:number):number {
+  let wavelength = 1 / wavenumber;
+  wavelength=Math.round(wavelength*1000);
+  wavelength = clamp(380,780,wavelength);
+  return wavelength;
+}
+
 async function getStarData(query:string): Promise<StarData[]> {
   const res = await fetch(`https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=${query}`, {
     method: 'GET',
@@ -29,12 +44,14 @@ async function getStarData(query:string): Promise<StarData[]> {
   const stars: StarData[] = [];
   
   json.data.forEach((info:number[]) => {
-    const star:StarData = {id:0,rightAscencion:0,declination:0,parallax:0,coordinates:{x:0,y:0,z:0}};
+    const star:StarData = {id:0,rightAscencion:0,declination:0,parallax:0,pseudocolor:0,coordinates:{x:0,y:0,z:0}};
 
     star.id=info[0];
     star.rightAscencion=info[1];
     star.declination=info[2];
-    star.parallax=info[3]
+    star.parallax=info[3];
+    star.pseudocolor=calculateColor(info[4]);
+    console.log(info[4]);
     star.coordinates=get3DCoordinates(star.rightAscencion,star.declination,star.parallax);
 
     stars.push(star);
