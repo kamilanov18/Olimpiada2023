@@ -1,9 +1,9 @@
 <script lang="ts">
 	import Login from '../components/Login.svelte';
 	import Register from '../components/Register.svelte';
-	import { invalidateAll } from '$app/navigation'
-	import { applyAction, enhance } from '$app/forms'
-import {
+	import { invalidateAll } from '$app/navigation';
+	import { applyAction, enhance } from '$app/forms';
+	import {
 		Collapse,
 		Navbar,
 		NavbarToggler,
@@ -14,17 +14,15 @@ import {
 		Styles,
 		Button
 	} from 'sveltestrap/src';
-	import { page } from '$app/stores'
+	import { page } from '$app/stores';
 
 	console.log($page.data.user);
-	
-  //isHamburger
+
+	//isHamburger
 	let isOpen = false;
 	function handleUpdate(event: any) {
 		isOpen = event.detail.isOpen;
 	}
-
-
 </script>
 
 <Styles />
@@ -38,33 +36,38 @@ import {
 			</NavItem>
 		</Nav>
 		<Nav navbar class="ml-auto">
-{#if !$page.data.user}
+			{#if !$page.data.user}
+				<!-------------REGISTER------------->
 
-      <!-------------REGISTER------------->
+				<Register />
+				<!-------------/REGISTER------------->
 
-<Register ></Register>
-        <!-------------/REGISTER------------->
-
-      <Login></Login>
-{/if}
-{#if $page.data.user}
+				<Login />
+			{/if}
+			{#if $page.data.user}
 				<NavItem>
-					<form method="POST" action="/logout" use:enhance={() => {
-						return async ({ result }) => {
-							invalidateAll()
-							await applyAction(result)
-						}
-					}} >
-						<Button color="light" type="submit" outline >Logout</Button>
+					<NavLink href="/uploadPhoto">Upload A Photo</NavLink>
+				</NavItem>
+				<NavItem>
+					<form
+						method="POST"
+						action="/logout"
+						use:enhance={() => {
+							return async ({ result }) => {
+								invalidateAll();
+								await applyAction(result);
+							};
+						}}
+					>
+						<Button color="light" type="submit" outline>Logout</Button>
 					</form>
-					
 				</NavItem>
 			{/if}
 		</Nav>
 	</Collapse>
 </Navbar>
 <div class="center-items">
-	<slot ></slot>
+	<slot />
 </div>
 
 <style>
@@ -75,13 +78,12 @@ import {
 	:global(div.modal-content) {
 		background-color: rgb(42, 46, 53) !important;
 	}
-	:global(body){
-    background: linear-gradient(176deg,rgb(18,24,27) 50%,rgb(32,39,55) 100%);;
-    background-attachment: fixed;
+	:global(body) {
+		background: linear-gradient(176deg, rgb(18, 24, 27) 50%, rgb(32, 39, 55) 100%);
+		background-attachment: fixed;
 	}
-	:global(.center-items){
-		display:grid;
-		place-items:center;
+	:global(.center-items) {
+		display: grid;
+		place-items: center;
 	}
-
 </style>

@@ -1,10 +1,16 @@
-import { json } from '@sveltejs/kit';
+import { json,redirect } from '@sveltejs/kit';
 import { mssqlConnection } from '../../db/mssqldb';
 import { Request } from 'mssql';
 import type { Action, Actions,PageServerLoad  } from './$types';
 import { fail } from '@sveltejs/kit';
 import {v4 as uuidv4} from 'uuid';
 
+
+export const load:PageServerLoad = async ({locals})=>{
+    if(locals.user){
+        throw redirect(302,'login');
+    }
+}
 
 const register: Action = async ({ request }) => {
 	const connection = await mssqlConnection();
