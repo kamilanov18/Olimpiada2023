@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { Instance, type ThreltePointerEvent, useThrelte, PointLight } from '@threlte/core';
+	import { Instance, type ThreltePointerEvent, useThrelte, PointLight, T } from '@threlte/core';
 	import type { StarData } from 'src/types';
+	import { MeshStandardMaterial, SphereGeometry } from 'three';
     import { cursorPosition, isCursorVisible, targetStar } from '../stores'
     export let starData: StarData;
 
@@ -23,4 +24,9 @@
     }
 </script>
 
-<Instance on:pointerleave={onPointerLeave} on:pointerenter={onPointerEnter} on:click={onClick}  color={starData.pseudocolor ?? 0xffffff} position={starData.coordinates} />
+<Instance on:pointerleave={onPointerLeave} on:pointerenter={onPointerEnter} on:click={onClick} color={starData.pseudocolor} position={starData.coordinates} />
+<T.Mesh 
+    position={[Number(starData.coordinates.x),Number(starData.coordinates.y),Number(starData.coordinates.z)]} 
+    material={new MeshStandardMaterial({color:starData.pseudocolor, emissive:starData.pseudocolor})} 
+    geometry={new SphereGeometry((1e-3)*starData.mag)} 
+/>

@@ -5,6 +5,7 @@ export type StarData = {
     rightAscencion: number,
     declination: number,
     parallax: number,
-    pseudocolor: number,
+    pseudocolor: string,
+    mag: number,
     coordinates: Position
 }

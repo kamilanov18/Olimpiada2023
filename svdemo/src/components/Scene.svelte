@@ -1,6 +1,6 @@
 <script lang='ts'>
     import * as THREE from 'three';
-    import { OrbitControls, PerspectiveCamera, T, InstancedMesh, type Position, Pass } from '@threlte/core';
+    import { OrbitControls, PerspectiveCamera, T, InstancedMesh, type Position, Pass, AmbientLight } from '@threlte/core';
     import { Environment } from '@threlte/extras';
     import Star from '../components/Star.svelte';
     import type { StarData } from 'src/types';
@@ -12,7 +12,7 @@
     
     export let data: PageData;
     let stars: StarData[] = data.stars;
-    let targetedStar: StarData = {id:0, rightAscencion:0, declination:0, parallax:0,pseudocolor:0, coordinates:{x:0,y:0,z:0}};
+    let targetedStar: StarData = {id:0, rightAscencion:0, declination:0, parallax:0,pseudocolor:'',mag:0, coordinates:{x:0,y:0,z:0}};
     
     let tweenedOrbitControlTargetCoordinates = tweened<Position>({x:0,y:0,z:0}, {
         duration:500
@@ -31,17 +31,13 @@
     }
 
     targetStar.subscribe(async (val:StarData)=>{
-        console.log(targetedStar.pseudocolor);
+        
         if(val.coordinates.x==0&&val.coordinates.y==0&&val.coordinates.z==0) return;
         targetedStar=val;
         tweenedOrbitControlTargetCoordinates.set(targetedStar.coordinates);
         let query,sizeCoefficient=1.5;
         let parallaxLowerArc = targetedStar.parallax/(1-(sizeCoefficient/100)*targetedStar.parallax);
         let parallaxHigherArc = targetedStar.parallax/(1+(sizeCoefficient/100)*targetedStar.parallax);
-
-        console.log('Upper arc parallax: '+parallaxHigherArc);
-        console.log('Stellar parallax: '+targetedStar.parallax);
-        console.log('Lower arc parallax: '+parallaxLowerArc);
 
         let factor = parallaxHigherArc/parallaxLowerArc;
         let figureDegrees = sizeCoefficient*targetedStar.parallax*factor;
@@ -59,13 +55,14 @@
             figureDegrees=70;
         }
 
-        console.log("degrees: "+figureDegrees);
+        console.log(targetedStar.pseudocolor);
+        console.log(targetedStar.mag);
         
         if(targetedStar.parallax>110)
         {
-            query = 'SELECT+TOP+1000+source_id,ra,dec,parallax,nu_eff_used_in_astrometry+FROM+gaiadr3.gaia_source+WHERE+parallax>0.1+ORDER+BY+parallax+DESC';
+            query = 'SELECT+TOP+1000+source_id,ra,dec,parallax,bp_rp,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+parallax>0.1+ORDER+BY+parallax+DESC';
         } else {
-            query = `SELECT+source_id,ra,dec,parallax,nu_eff_used_in_astrometry+FROM+gaiadr3.gaia_source+WHERE+1=CONTAINS(POINT(ra,dec),CIRCLE(${targetedStar.rightAscencion},${targetedStar.declination},${figureDegrees}))+AND+parallax+BETWEEN+${parallaxHigherArc}+AND+${parallaxLowerArc}`;
+            query = `SELECT+source_id,ra,dec,parallax,bp_rp,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+1=CONTAINS(POINT(ra,dec),CIRCLE(${targetedStar.rightAscencion},${targetedStar.declination},${figureDegrees}))+AND+parallax+BETWEEN+${parallaxHigherArc}+AND+${parallaxLowerArc}`;
         }
         
         const res = await fetch(`http://localhost:5173?query=${query}`,{method:'GET'});
@@ -93,7 +90,7 @@
 <T.Mesh material={new THREE.MeshStandardMaterial({color: 0xff00ff,emissive:0xff00ff})} geometry={new THREE.SphereGeometry(0.1)} position={[0,1,0]}  />
 <T.Mesh material={new THREE.MeshStandardMaterial({color: 0x00ffff,emissive:0x00ffff})} geometry={new THREE.SphereGeometry(0.1)} position={[1,0,0]}  />
 
-<InstancedMesh interactive material={new THREE.MeshStandardMaterial({color: 0xffffff,emissive:0xffffff, emissiveIntensity:10})} geometry={new THREE.SphereGeometry(1e-2)}>
+<InstancedMesh interactive material={new THREE.MeshStandardMaterial({transparent:true,opacity:0, depthWrite: false})} geometry={new THREE.SphereGeometry(1e-1)}>
     {#each stars as star }
         <Star starData={star} />
     {/each}
