@@ -57,6 +57,7 @@
 
         console.log(targetedStar.pseudocolor);
         console.log(targetedStar.mag);
+        console.log(targetedStar.id);
         
         if(targetedStar.parallax>110)
         {
