@@ -25,8 +25,8 @@
 	}
 </script>
 
-<Styles />
-<Navbar color="dark" dark expand="md">
+
+<Navbar id="navbar" color="dark" dark expand="md">
 	<NavbarBrand href="/index">StarIndex</NavbarBrand>
 	<NavbarToggler on:click={() => (isOpen = !isOpen)} />
 	<Collapse {isOpen} navbar expand="md" on:update={handleUpdate}>
@@ -66,6 +66,7 @@
 		</Nav>
 	</Collapse>
 </Navbar>
+<Styles  />
 <div class="center-items">
 	<slot />
 </div>
@@ -86,4 +87,10 @@
 		display: grid;
 		place-items: center;
 	}
+	:global(#navbar){
+		width: 100%;
+		position: fixed;
+	}
+	
+
 </style>
