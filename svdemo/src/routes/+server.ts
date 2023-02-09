@@ -99,13 +99,14 @@ function calculateColor(wavenumber:number|null):string {
 }
 
 async function getStarData(query:string): Promise<StarData[]> {
-  const res = await fetch(`https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=${query}`, {
-    method: 'GET',
+  const urlReq = await fetch(`https://gea.esac.esa.int/tap-server/tap/async?PHASE=run&REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=${query}`, {
+    method: 'POST',
     headers: {
       'content-type': 'application/json'
     }
   });
-  console.log(res.status);
+  console.log(urlReq.url);
+  const res = await fetch(urlReq.url+"/results/result");
   const json = await res.json();
   const stars: StarData[] = [];
   
