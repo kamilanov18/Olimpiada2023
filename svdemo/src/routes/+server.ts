@@ -3,6 +3,8 @@ import type { Position } from "@threlte/core";
 import type { StarData } from "src/types";
 import type { RequestHandler } from "./$types";
 import chroma from "chroma-js";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 function get3DCoordinates(rightAscension: number,declination: number,parallax: number): Position/*[number,number,number]*/ {
   const theta = (90 - declination) * Math.PI / 180;
@@ -91,7 +93,10 @@ function calculateColor(wavenumber:number|null):string {
 
 // Map BP-RP values to RGB colors
   //const color = colorScale(wavenumber as number / 3).hex();
-  const color = chroma.temperature(wavenumber as number).hex();
+  let color;
+  if(wavenumber)
+    color = chroma.temperature(wavenumber as number).hex();
+  else color = '#00ff00';
   console.log(wavenumber);
   console.log(color);
 
@@ -99,14 +104,28 @@ function calculateColor(wavenumber:number|null):string {
 }
 
 async function getStarData(query:string): Promise<StarData[]> {
-  const urlReq = await fetch(`https://gea.esac.esa.int/tap-server/tap/async?PHASE=run&REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=${query}`, {
+  const urlReq = await fetch(`https://gea.esac.esa.int/tap-server/tap/async?USERNAME=${process.env.GAIA_ARCHIVE_USERNAME}&PASSWORD=${process.env.GAIA_ARCHIVE_PASSWORD}&PHASE=run&REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=${query}`, {
     method: 'POST',
     headers: {
       'content-type': 'application/json'
     }
   });
   console.log(urlReq.url);
-  const res = await fetch(urlReq.url+"/results/result");
+  let res = new Response(), isRequestComplete;
+  while(!isRequestComplete) {
+    res = await fetch(urlReq.url+"/phase", {
+      method: 'GET'
+    });
+    if((await res.text())==="COMPLETED")
+      isRequestComplete=true;
+  }
+  res = await fetch(urlReq.url+"/results/result", {
+    method: 'GET',
+    headers: {
+      'content-type': 'application/json'
+    }
+  });
+  
   const json = await res.json();
   const stars: StarData[] = [];
   
