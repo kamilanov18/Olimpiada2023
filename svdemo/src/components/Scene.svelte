@@ -61,9 +61,9 @@
         
         if(targetedStar.parallax>110)
         {
-            query = 'SELECT+TOP+1000+source_id,ra,dec,parallax,bp_rp,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+parallax>0.1+ORDER+BY+parallax+DESC';
+            query = 'SELECT+TOP+1000+source_id,ra,dec,parallax,teff_gspphot_upper,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+parallax>0.1+ORDER+BY+parallax+DESC';
         } else {
-            query = `SELECT+source_id,ra,dec,parallax,bp_rp,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+1=CONTAINS(POINT(ra,dec),CIRCLE(${targetedStar.rightAscencion},${targetedStar.declination},${figureDegrees}))+AND+parallax+BETWEEN+${parallaxHigherArc}+AND+${parallaxLowerArc}`;
+            query = `SELECT+source_id,ra,dec,parallax,teff_gspphot_upper,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+1=CONTAINS(POINT(ra,dec),CIRCLE(${targetedStar.rightAscencion},${targetedStar.declination},${figureDegrees}))+AND+parallax+BETWEEN+${parallaxHigherArc}+AND+${parallaxLowerArc}`;
         }
         
         const res = await fetch(`http://localhost:5173?query=${query}`,{method:'GET'});

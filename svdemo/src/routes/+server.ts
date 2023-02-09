@@ -87,10 +87,12 @@ function calculateColor(wavenumber:number|null):string {
   
   // console.log(wavelength);
 
-  const colorScale = chroma.scale(['blue', 'yellow', 'red']).mode('lch');
+  //const colorScale = chroma.scale(['blue', 'yellow', 'red']).mode('lch');
 
 // Map BP-RP values to RGB colors
-  const color = colorScale(wavenumber as number / 3).hex();
+  //const color = colorScale(wavenumber as number / 3).hex();
+  const color = chroma.temperature(wavenumber as number).hex();
+  console.log(wavenumber);
   console.log(color);
 
   return color;
