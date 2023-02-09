@@ -1,0 +1,27 @@
+<script lang='ts'>
+	import { Group, Line2 } from "@threlte/core";
+	import type { ConstellationData } from "src/types";
+	import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
+
+    export let constellation: ConstellationData;
+</script>
+
+<Group >
+    {#each constellation.connections as connection }
+        <Line2
+            points={[
+              [Number(connection.startingStar.coordinates.x)
+              ,Number(connection.startingStar.coordinates.y)
+              ,Number(connection.startingStar.coordinates.z)],
+              [Number(connection.endingStar.coordinates.x)
+              ,Number(connection.endingStar.coordinates.y)
+              ,Number(connection.endingStar.coordinates.z)],
+            ]}
+            material={new LineMaterial({
+              worldUnits: true,
+              linewidth: 0.05,
+              color: 0xffff00
+            })}
+        />
+    {/each}
+</Group>

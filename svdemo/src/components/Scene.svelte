@@ -3,12 +3,13 @@
     import { OrbitControls, PerspectiveCamera, T, InstancedMesh, type Position, Pass, AmbientLight } from '@threlte/core';
     import { Environment } from '@threlte/extras';
     import Star from '../components/Star.svelte';
-    import type { StarData } from 'src/types';
+    import type { ConstellationData, StarData } from 'src/types';
     import type { PageData } from '../routes/$types';
 	import { targetStar} from '../stores'
     import { tweened } from 'svelte/motion';
 	import HoverCursor from './HoverCursor.svelte';
 	import TargetCursor from './TargetCursor.svelte';
+	import Constellation from './Constellation.svelte';
     
     export let data: PageData;
     let stars: StarData[] = data.stars;
@@ -17,6 +18,12 @@
     let tweenedOrbitControlTargetCoordinates = tweened<Position>({x:0,y:0,z:0}, {
         duration:500
     });
+
+    let constellation: ConstellationData = {
+        name:'test',
+        discoverer:'test',
+        connections: [{startingStar:stars[0],endingStar:stars[1]}]
+    };
 
     let orbitControls = {
         enableDamping:true,
@@ -96,3 +103,5 @@
         <Star starData={star} />
     {/each}
 </InstancedMesh>
+
+<Constellation constellation={constellation} />

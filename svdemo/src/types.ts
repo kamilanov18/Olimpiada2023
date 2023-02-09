@@ -9,3 +9,14 @@ export type StarData = {
     mag: number,
     coordinates: Position
 }
+
+export type Connection = {
+    startingStar:StarData,
+    endingStar:StarData
+}
+
+export type ConstellationData = {
+    name: string,
+    discoverer: string,
+    connections: Connection[]
+}
