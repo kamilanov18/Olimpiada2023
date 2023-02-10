@@ -10,7 +10,8 @@
 	import HoverCursor from './HoverCursor.svelte';
 	import TargetCursor from './TargetCursor.svelte';
 	import Constellation from './Constellation.svelte';
-    
+    import {UnrealBloomPass} from 'three/examples/jsm/postprocessing/UnrealBloomPass';
+	    
     export let data: PageData;
     let stars: StarData[] = data.stars;
     let targetedStar: StarData = {id:0, rightAscencion:0, declination:0, parallax:0,pseudocolor:'',mag:0, coordinates:{x:0,y:0,z:0}};
@@ -83,10 +84,12 @@
     });
 </script>
 
+<Pass pass={new UnrealBloomPass(new THREE.Vector2( window.innerWidth, window.innerHeight ), 1, 0.5, 0)} />
+
 <HoverCursor />
 <TargetCursor />
 <T.GridHelper />
-<!-- <Pass pass={new UnrealBloomPass()} /> -->
+
 <Environment path ='./' files={'black_background.png'} isBackground={true} />
 
 <PerspectiveCamera {...camera} >
@@ -105,3 +108,4 @@
 </InstancedMesh>
 
 <Constellation constellation={constellation} />
+

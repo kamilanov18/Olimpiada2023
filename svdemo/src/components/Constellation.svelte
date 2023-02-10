@@ -18,9 +18,8 @@
               ,Number(connection.endingStar.coordinates.z)],
             ]}
             material={new LineMaterial({
-              worldUnits: true,
-              linewidth: 0.05,
-              color: 0xffff00
+              linewidth: 0.001,
+              color: 0xe3c27f
             })}
         />
     {/each}
