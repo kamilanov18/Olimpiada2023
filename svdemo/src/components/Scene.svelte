@@ -4,7 +4,7 @@
     import { Environment } from '@threlte/extras';
     import Star from '../components/Star.svelte';
     import type { ConstellationData, StarData } from 'src/types';
-	import { isConstellationsVisible, targetStar} from '../stores';
+	import { currentConstellation, isConstellationsVisible, targetStar} from '../stores';
     import { tweened } from 'svelte/motion';
 	import HoverCursor from './HoverCursor.svelte';
 	import TargetCursor from './TargetCursor.svelte';
@@ -16,6 +16,12 @@
     let stars: StarData[];
     let displayConstellations = false;
     let constellations: ConstellationData[];
+    let creatableConstellation: ConstellationData = {
+        name:'',
+        discoverer:'',
+        connections:[]
+    }
+
     let targetedStar: StarData = {id:0, rightAscencion:0, declination:0, parallax:0,pseudocolor:'',mag:0, coordinates:{x:0,y:0,z:0}};
 
     stars = data.stars;
@@ -61,6 +67,10 @@
     isConstellationsVisible.subscribe((val:boolean)=>{
         displayConstellations=val;
     });
+
+    currentConstellation.subscribe((val:ConstellationData)=>{
+        creatableConstellation=val;
+    })
 </script>
 
 <Pass pass={new UnrealBloomPass(new THREE.Vector2( window.innerWidth, window.innerHeight ), 1, 0.5, 0)} />
@@ -90,6 +100,6 @@
     {#each constellations as constellation }
         <Constellation constellation={constellation} />
     {/each}
+
+    <Constellation constellation={creatableConstellation} />
 </Group>
-
-

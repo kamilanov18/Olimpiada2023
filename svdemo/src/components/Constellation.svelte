@@ -10,12 +10,12 @@
     {#each constellation.connections as connection }
         <Line2
             points={[
-              [Number(connection.startingStar.coordinates.x)
-              ,Number(connection.startingStar.coordinates.y)
-              ,Number(connection.startingStar.coordinates.z)],
-              [Number(connection.endingStar.coordinates.x)
-              ,Number(connection.endingStar.coordinates.y)
-              ,Number(connection.endingStar.coordinates.z)],
+              [Number(connection.startingStar?.coordinates.x)
+              ,Number(connection.startingStar?.coordinates.y)
+              ,Number(connection.startingStar?.coordinates.z)],
+              [Number(connection.endingStar?.coordinates.x)
+              ,Number(connection.endingStar?.coordinates.y)
+              ,Number(connection.endingStar?.coordinates.z)],
             ]}
             material={new LineMaterial({
               linewidth: 0.001,
