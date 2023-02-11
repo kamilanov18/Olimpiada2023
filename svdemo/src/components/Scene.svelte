@@ -42,7 +42,12 @@
 
     targetStar.subscribe(async (val:StarData)=>{
         if(targetedStar.id===val.id) return;
-        if(val.coordinates.x==0&&val.coordinates.y==0&&val.coordinates.z==0) return;
+        if(val.coordinates.x==0&&val.coordinates.y==0&&val.coordinates.z==0) {
+            tweenedOrbitControlTargetCoordinates.set({x:0,y:0,z:0});
+            const res = await fetch(`http://localhost:5173?isInitial=true`,{method:'GET'});
+            stars = await res.json();
+            return;
+        }
         targetedStar=val;
         console.log("testetststetst"+targetedStar)
         tweenedOrbitControlTargetCoordinates.set(targetedStar.coordinates);
