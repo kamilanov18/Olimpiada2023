@@ -3,7 +3,8 @@
   import { enhance } from "$app/forms";
 	import { isConstellationsVisible, targetStar } from "../stores";
   import { Button, Card, Col, Input, Row } from "sveltestrap";
-	import type { ActionData } from "../routes/$types";
+	import type { ActionData } from "../routes/atlas/$types";
+
   export let form: ActionData;
   
   function centerSun() {
@@ -21,7 +22,7 @@
 <Row><Col><Button>AAA</Button></Col></Row>
 
 <Card>
-  <form use:enhance method='POST' action='?/find'>
+  <form use:enhance method='POST' action='/atlas?/find'>
     <Input name="ra" id="ra" placeholder="Right Ascension" required />
     <Input name="dec" id="dec" placeholder="Declination" required />
     <Row><Col><Button type="submit">Find Star</Button></Col></Row>

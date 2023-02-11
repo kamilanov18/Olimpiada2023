@@ -1,8 +1,9 @@
 <script lang='ts'>
 	import { Canvas } from '@threlte/core';
-	import Scene from '../components/Scene.svelte';
-  import AtlasUI from '../components/AtlasUI.svelte';
-  import type { ActionData, PageData } from './$types';
+	import Scene from '../../components/Scene.svelte';
+  import AtlasUI from '../../components/AtlasUI.svelte';
+	import type { ActionData, PageData } from './$types';
+
   export let data: PageData;
   export let form:ActionData;
 </script>

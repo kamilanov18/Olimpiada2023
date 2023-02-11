@@ -4,13 +4,13 @@
     import { Environment } from '@threlte/extras';
     import Star from '../components/Star.svelte';
     import type { ConstellationData, StarData } from 'src/types';
-    import type { PageData } from '../routes/$types';
 	import { isConstellationsVisible, targetStar} from '../stores';
     import { tweened } from 'svelte/motion';
 	import HoverCursor from './HoverCursor.svelte';
 	import TargetCursor from './TargetCursor.svelte';
 	import Constellation from './Constellation.svelte';
     import {UnrealBloomPass} from 'three/examples/jsm/postprocessing/UnrealBloomPass';
+	import type { PageData } from '../routes/atlas/$types';
 
     export let data: PageData;
     let stars: StarData[];
@@ -41,7 +41,7 @@
         if(targetedStar.id===val.id) return;
         if(val.coordinates.x==0&&val.coordinates.y==0&&val.coordinates.z==0) {
             tweenedOrbitControlTargetCoordinates.set({x:0,y:0,z:0});
-            const res = await fetch(`http://localhost:5173?isInitial=true`,{method:'GET'});
+            const res = await fetch(`http://localhost:5173/atlas?isInitial=true`,{method:'GET'});
             stars = await res.json();
             return;
         }
@@ -49,7 +49,7 @@
         console.log("testetststetst"+targetedStar)
         tweenedOrbitControlTargetCoordinates.set(targetedStar.coordinates);
         
-        const res = await fetch(`http://localhost:5173?isInitial=false&ra=${targetedStar.rightAscencion}&dec=${targetedStar.declination}&p=${targetedStar.parallax}`,{method:'GET'});
+        const res = await fetch(`http://localhost:5173/atlas?isInitial=false&ra=${targetedStar.rightAscencion}&dec=${targetedStar.declination}&p=${targetedStar.parallax}`,{method:'GET'});
         stars = await res.json();
         console.log(stars.length);
     });

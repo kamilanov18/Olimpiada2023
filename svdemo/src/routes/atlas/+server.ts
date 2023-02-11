@@ -1,6 +1,5 @@
-import { json } from "@sveltejs/kit";
-import type { RequestHandler } from "./$types";
-import { StellarGenerator } from "../stellarGenerator";
+import { json, type RequestHandler } from "@sveltejs/kit";
+import { StellarGenerator } from "../../stellarGenerator";
 import * as dotenv from "dotenv";
 dotenv.config();
 
