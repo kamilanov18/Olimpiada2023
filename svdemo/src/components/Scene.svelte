@@ -1,11 +1,11 @@
 <script lang='ts'>
     import * as THREE from 'three';
-    import { OrbitControls, PerspectiveCamera, T, InstancedMesh, type Position, Pass } from '@threlte/core';
+    import { OrbitControls, PerspectiveCamera, T, InstancedMesh, type Position, Pass, Group } from '@threlte/core';
     import { Environment } from '@threlte/extras';
     import Star from '../components/Star.svelte';
     import type { ConstellationData, StarData } from 'src/types';
     import type { PageData } from '../routes/$types';
-	import { targetStar} from '../stores';
+	import { isConstellationsVisible, targetStar} from '../stores';
     import { tweened } from 'svelte/motion';
 	import HoverCursor from './HoverCursor.svelte';
 	import TargetCursor from './TargetCursor.svelte';
@@ -14,19 +14,16 @@
 
     export let data: PageData;
     let stars: StarData[];
+    let displayConstellations = false;
+    let constellations: ConstellationData[];
     let targetedStar: StarData = {id:0, rightAscencion:0, declination:0, parallax:0,pseudocolor:'',mag:0, coordinates:{x:0,y:0,z:0}};
 
     stars = data.stars;
+    constellations = data.constellations;
     
     let tweenedOrbitControlTargetCoordinates = tweened<Position>({x:0,y:0,z:0}, {
         duration:500
     });
-
-    let constellation: ConstellationData = {
-        name:'test',
-        discoverer:'test',
-        connections: [{startingStar:stars[0],endingStar:stars[1]}]
-    };
 
     let orbitControls = {
         enableDamping:true,
@@ -60,6 +57,10 @@
     tweenedOrbitControlTargetCoordinates.subscribe((val:any)=>{
         orbitControls.target=val
     });
+
+    isConstellationsVisible.subscribe((val:boolean)=>{
+        displayConstellations=val;
+    });
 </script>
 
 <Pass pass={new UnrealBloomPass(new THREE.Vector2( window.innerWidth, window.innerHeight ), 1, 0.5, 0)} />
@@ -85,5 +86,10 @@
     {/each}
 </InstancedMesh>
 
-<Constellation constellation={constellation} />
+<Group visible={displayConstellations}>
+    {#each constellations as constellation }
+        <Constellation constellation={constellation} />
+    {/each}
+</Group>
+
 

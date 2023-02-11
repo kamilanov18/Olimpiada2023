@@ -1,13 +1,20 @@
 <script lang='ts'>
 
   import { enhance } from "$app/forms";
-	import { targetStar } from "../stores";
-  import { Button, Card, Col, Form, Input, Row } from "sveltestrap";
+	import { isConstellationsVisible, targetStar } from "../stores";
+  import { Button, Card, Col, Input, Row } from "sveltestrap";
 	import type { ActionData } from "../routes/$types";
   export let form: ActionData;
   
   function centerSun() {
     targetStar.set({id:0, rightAscencion:0, declination:0, parallax:0,pseudocolor:'',mag:0, coordinates:{x:0,y:0,z:0}});
+  }
+
+  let displayConstellations = false;
+
+  function toggleConstellations() {
+    displayConstellations=!displayConstellations;
+    isConstellationsVisible.set(displayConstellations);
   }
 </script>
 
@@ -28,4 +35,12 @@
   </form>
 </Card>
 <Row><Col><Button on:click={centerSun}>Center Sun</Button></Col></Row>
-<Row><Col><Button>Show / Hide Constellations</Button></Col></Row>
+<Row>
+  <Col><Button on:click={toggleConstellations}> 
+    {#if displayConstellations==true}
+      Hide 
+    {:else}
+      Show
+    {/if}
+    Constellations
+  </Button></Col></Row>
