@@ -16,8 +16,6 @@
 	} from 'sveltestrap/src';
 	import { page } from '$app/stores';
 
-	console.log($page.data.user);
-
 	//isHamburger
 	let isOpen = false;
 	function handleUpdate(event: any) {
@@ -25,8 +23,8 @@
 	}
 </script>
 
-
-<Navbar id="navbar" color="dark" dark expand="md">
+<title>StarIndex</title>
+<Navbar id="navbar" color="dark" dark expand="md" >
 	<NavbarBrand href="/index">StarIndex</NavbarBrand>
 	<NavbarToggler on:click={() => (isOpen = !isOpen)} />
 	<Collapse {isOpen} navbar expand="md" on:update={handleUpdate}>
@@ -66,7 +64,7 @@
 		</Nav>
 	</Collapse>
 </Navbar>
-<Styles  />
+<Styles />
 <div class="center-items">
 	<slot />
 </div>
@@ -87,10 +85,28 @@
 		display: grid;
 		place-items: center;
 	}
-	:global(#navbar){
+	:global(#navbar) {
 		width: 100%;
 		position: fixed;
+		z-index: 97;
 	}
-	
+	:global(::-webkit-scrollbar) {
+		width: 10px;
+	}
 
+	/* Track */
+	:global(::-webkit-scrollbar-track) {
+		background: rgb(32, 39, 55) 100%;
+	}
+
+	/* Handle */
+	:global(::-webkit-scrollbar-thumb) {
+		background: black;
+		border-radius: 8px;
+	}
+
+	/* Handle on hover */
+	:global(::-webkit-scrollbar-thumb:hover) {
+		background: #555;
+	}
 </style>
