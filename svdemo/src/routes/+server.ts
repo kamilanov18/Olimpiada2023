@@ -1,4 +1,4 @@
-import { json } from "@sveltejs/kit";
+import { json, type Action, type Actions } from "@sveltejs/kit";
 import type { Position } from "@threlte/core";
 import type { StarData } from "src/types";
 import type { RequestHandler } from "./$types";
@@ -97,8 +97,8 @@ function calculateColor(wavenumber:number|null):string {
   if(wavenumber)
     color = chroma.temperature(wavenumber as number).hex();
   else color = '#00ff00';
-  console.log(wavenumber);
-  console.log(color);
+  // console.log(wavenumber);
+  // console.log(color);
 
   return color;
 }
@@ -147,9 +147,58 @@ async function getStarData(query:string): Promise<StarData[]> {
   return stars;
 }
 
+function determineStarRenderDistanceQuery(rightAscencion:number, declination:number, parallax:number) {
+  let query; 
+  const sizeCoefficient=1.5;
+  let parallaxLowerArc = parallax/(1-(sizeCoefficient/100)*parallax);
+  const parallaxHigherArc = parallax/(1+(sizeCoefficient/100)*parallax);
+  const factor = parallaxHigherArc/parallaxLowerArc;
+  let figureDegrees = sizeCoefficient*parallax*factor;      
+        
+  if(figureDegrees>90) figureDegrees=90;
+
+  else if(parallax>20)
+  {
+    figureDegrees=30;
+    parallaxLowerArc=767;
+  }
+  else if(parallaxLowerArc<0)
+  {
+    parallaxLowerArc=767;
+    figureDegrees=70;
+  }
+        
+  if(parallax>110)
+    query = 'SELECT+TOP+1000+source_id,ra,dec,parallax,teff_gspphot_upper,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+parallax>0.1+ORDER+BY+parallax+DESC';
+  else
+    query = `SELECT+source_id,ra,dec,parallax,teff_gspphot_upper,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+1=CONTAINS(POINT(ra,dec),CIRCLE(${rightAscencion},${declination},${figureDegrees}))+AND+parallax+BETWEEN+${parallaxHigherArc}+AND+${parallaxLowerArc}`;
+  return query;
+}
+
 export const GET = ( async({ url }) => {
-    const query = url.searchParams.get('query') as string;
+    const isInitial = url.searchParams.get('isInitial') as string;
+    console.log(isInitial);
+    if(isInitial==='true')
+    {
+      const stars = await getStarData('SELECT+TOP+2000+source_id,ra,dec,parallax,COALESCE(nu_eff_used_in_astrometry,pseudocolour)+AS+tmp,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+parallax>0.1+ORDER+BY+parallax+DESC');
+      return json(stars);
+    }
+    const rightAscencion = Number(url.searchParams.get('ra') as string);
+    const declination = Number(url.searchParams.get('dec') as string);
+    const parallax = Number(url.searchParams.get('p') as string);
+    const query = determineStarRenderDistanceQuery(rightAscencion,declination,parallax);
+
     const stars = await getStarData(query);
     return json(stars);
 
 }) satisfies RequestHandler;
+
+const find: Action = async ({ request }) => {
+  console.log('aaa');
+  const req = await request.formData();
+  const rightAscencion = req.get('ra');
+  const declination = req.get('dec');
+  
+}
+
+export const actions: Actions = {find};
