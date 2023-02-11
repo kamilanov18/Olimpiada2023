@@ -7,7 +7,7 @@
   export let form: ActionData;
   
   function centerSun() {
-
+    targetStar.set({id:0, rightAscencion:0, declination:0, parallax:0,pseudocolor:'',mag:0, coordinates:{x:0,y:0,z:0}});
   }
 </script>
 
