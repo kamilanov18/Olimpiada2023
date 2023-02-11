@@ -2,8 +2,9 @@
 	import { Canvas } from '@threlte/core';
 	import Scene from '../components/Scene.svelte';
   import AtlasUI from '../components/AtlasUI.svelte';
-  import type { PageData } from './$types';
+  import type { ActionData, PageData } from './$types';
   export let data: PageData;
+  export let form:ActionData;
 </script>
 
 <style>
@@ -17,7 +18,7 @@
     }
 </style>
 
-<AtlasUI />
+<AtlasUI form={form}/>
 
 <div class="canvas-container">
   <Canvas >

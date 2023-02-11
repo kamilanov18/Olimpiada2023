@@ -5,7 +5,7 @@
     import Star from '../components/Star.svelte';
     import type { ConstellationData, StarData } from 'src/types';
     import type { PageData } from '../routes/$types';
-	import { starList, targetStar} from '../stores';
+	import { targetStar} from '../stores';
     import { tweened } from 'svelte/motion';
 	import HoverCursor from './HoverCursor.svelte';
 	import TargetCursor from './TargetCursor.svelte';
@@ -15,10 +15,6 @@
     export let data: PageData;
     let stars: StarData[];
     let targetedStar: StarData = {id:0, rightAscencion:0, declination:0, parallax:0,pseudocolor:'',mag:0, coordinates:{x:0,y:0,z:0}};
-
-    starList.subscribe((val:any)=>{
-        stars=val;
-    })
 
     stars = data.stars;
     
@@ -45,10 +41,10 @@
     }
 
     targetStar.subscribe(async (val:StarData)=>{
-        
         if(targetedStar.id===val.id) return;
         if(val.coordinates.x==0&&val.coordinates.y==0&&val.coordinates.z==0) return;
         targetedStar=val;
+        console.log("testetststetst"+targetedStar)
         tweenedOrbitControlTargetCoordinates.set(targetedStar.coordinates);
         
         const res = await fetch(`http://localhost:5173?isInitial=false&ra=${targetedStar.rightAscencion}&dec=${targetedStar.declination}&p=${targetedStar.parallax}`,{method:'GET'});

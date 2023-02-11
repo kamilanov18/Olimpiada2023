@@ -6,20 +6,19 @@
     export let starData: StarData;
 
     const onPointerEnter = (e: CustomEvent<ThreltePointerEvent>) => {
-        console.log("Pointer enter: "+starData.id);
         cursorPosition.set(starData.coordinates);
         isCursorVisible.set(true);
         document.body.style.cursor = 'pointer';
     }
 
     const onPointerLeave = (e: CustomEvent<ThreltePointerEvent>) => {
-        console.log("Pointer leave: "+starData.id);
         isCursorVisible.set(false);
         document.body.style.cursor = 'auto';
     }
 
     const onClick = (e: CustomEvent<ThreltePointerEvent>) => {
         console.log("Pointer click: "+starData.id);
+        console.log(starData.rightAscencion,starData.declination)
         targetStar.set(starData);
     }
 </script>
