@@ -11,8 +11,8 @@ export type StarData = {
 }
 
 export type Connection = {
-    startingStar:StarData,
-    endingStar:StarData
+    startingStar: StarData | undefined,
+    endingStar: StarData | undefined
 }
 
 export type ConstellationData = {

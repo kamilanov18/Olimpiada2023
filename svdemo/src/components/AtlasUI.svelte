@@ -1,9 +1,10 @@
 <script lang='ts'>
 
   import { enhance } from "$app/forms";
-	import { isConstellationsVisible, targetStar } from "../stores";
+	import { currentConstellation, isConstellationsVisible, isMakingConstellation, targetStar } from "../stores";
   import { Button, Card, Col, Input, Row } from "sveltestrap";
 	import type { ActionData } from "../routes/atlas/$types";
+	import type { ConstellationData } from "src/types";
 
   export let form: ActionData;
   
@@ -12,10 +13,29 @@
   }
 
   let displayConstellations = false;
+  let isInConstellationCreationMode = false;
+  let constellation: ConstellationData;
+
+  currentConstellation.subscribe((val:ConstellationData)=>{
+    constellation=val;
+  }) 
 
   function toggleConstellations() {
     displayConstellations=!displayConstellations;
     isConstellationsVisible.set(displayConstellations);
+  }
+
+  function toggleConstellationMode() {
+    isInConstellationCreationMode=!isInConstellationCreationMode
+    isMakingConstellation.set(isInConstellationCreationMode);
+  }
+
+  function generateConstellation() {
+    console.log(constellation);
+  }
+
+  function resetConstellation() {
+    currentConstellation.set({name:'',discoverer:'',connections:[]});
   }
 </script>
 
@@ -44,4 +64,22 @@
       Show
     {/if}
     Constellations
-  </Button></Col></Row>
+  </Button></Col>
+</Row>
+<Row>
+  <Button on:click={toggleConstellationMode}>
+    {#if isInConstellationCreationMode==true}
+      Leave creation 
+    {:else}
+      Enter creation
+    {/if}
+    Mode
+  </Button>
+  <Card>
+    <!-- <form use:enhance > -->
+      <!-- <Input id='const-name' name='const-name' /> -->
+      <Button color='success'  on:click={generateConstellation} >Submit</Button>
+      <Button color='danger' on:click={resetConstellation} >Reset</Button>
+    <!-- </form> -->
+  </Card>
+</Row>
