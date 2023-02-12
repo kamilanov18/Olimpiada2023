@@ -46,6 +46,7 @@ const register: Action = async ({ request }) => {
 	}
 	try {
 		const result = await requestDB
+			.input("Id",uuidv4())
 			.input('Username', username)
 			.input('Email', email)
 			.input('Password', pass)

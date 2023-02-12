@@ -23,7 +23,7 @@ const login: Action = async ({ cookies, request }) => {
   
     const checkUsernameExists = await checkUsernameRequest
 		.input('Username', username)
-		.query('SELECT *  FROM Users WHERE Username = @Username');
+		.query('SELECT Username  FROM Users WHERE Username = @Username');
     if (checkUsernameExists.recordset.length <= 0) {
 
       return fail(400, { user: true });
