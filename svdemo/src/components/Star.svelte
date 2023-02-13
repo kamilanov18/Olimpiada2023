@@ -2,11 +2,16 @@
 	import { Instance, type ThreltePointerEvent, T } from '@threlte/core';
 	import type { ConstellationData, StarData, Connection } from 'src/types';
 	import { MeshStandardMaterial, SphereGeometry } from 'three';
-    import { currentConstellation, cursorPosition, isCursorVisible, isMakingConstellation, targetStar } from '../stores'
+    import { currentConstellation, cursorPosition, isCursorVisible, isMakingConstellation, targetStar,isLoadingRender } from '../stores'
     export let starData: StarData;
 
+    let isLoadingRenderStatus = false;
     let isInConstellationCreationMode = false;
     let constellation:ConstellationData = {name:'',discoverer:'',connections:[], viewedFromStarId: 0};
+
+    isLoadingRender.subscribe((val:boolean)=>{
+        isLoadingRenderStatus=val;
+    });
 
     currentConstellation.subscribe((val:ConstellationData)=>{
         constellation=val;
@@ -28,6 +33,10 @@
     }
 
     const onClick = (e: CustomEvent<ThreltePointerEvent>) => {
+        console.log(isLoadingRenderStatus);
+        if(isLoadingRenderStatus) return;
+        isLoadingRender.set(true)
+
         if(isInConstellationCreationMode) {
             if(constellation.connections.length==0) {
                 constellation.connections.push({startingStar:undefined,endingStar:undefined});

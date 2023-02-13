@@ -4,7 +4,7 @@
     import { Environment } from '@threlte/extras';
     import Star from '../components/Star.svelte';
     import type { ConstellationData, StarData } from 'src/types';
-	import { currentConstellation, isConstellationsVisible, targetStar} from '../stores';
+	import { currentConstellation, isConstellationsVisible, isLoadingRender, targetStar} from '../stores';
     import { tweened } from 'svelte/motion';
 	import HoverCursor from './HoverCursor.svelte';
 	import TargetCursor from './TargetCursor.svelte';
@@ -23,7 +23,7 @@
         viewedFromStarId: 0
     }
 
-    let targetedStar: StarData = {id:0, rightAscencion:0, declination:0, parallax:0,pseudocolor:'',mag:0, coordinates:{x:0,y:0,z:0}};
+    let targetedStar: StarData = {id:0, rightAscencion:0, declination:0, parallax:0,pseudocolor:'',mag:0, coordinates:{x:0,y:0,z:0},discoverer:undefined,scientificName:undefined,givenName:undefined};
 
     stars = data.stars;
     constellations = data.constellations;
@@ -64,6 +64,7 @@
         const res = await fetch(`http://localhost:5173/atlas?isInitial=false&ra=${targetedStar.rightAscencion}&dec=${targetedStar.declination}&p=${targetedStar.parallax}`,{method:'GET'});
         stars = await res.json();
         console.log(stars.length);
+        isLoadingRender.set(false);
     });
 
     tweenedOrbitControlTargetCoordinates.subscribe((val:any)=>{

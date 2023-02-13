@@ -50,7 +50,7 @@ class StellarGenerator {
         const stars: StarData[] = [];
         
         json.data.forEach((info:number[]) => {
-          const star:StarData = {id:0,rightAscencion:0,declination:0,parallax:0,pseudocolor:'',mag:0,coordinates:{x:0,y:0,z:0}};
+          const star:StarData = {id:0,rightAscencion:0,declination:0,parallax:0,pseudocolor:'',mag:0,coordinates:{x:0,y:0,z:0},discoverer:undefined,scientificName:undefined,givenName:''};
       
           star.id=info[0];
           star.rightAscencion=info[1];

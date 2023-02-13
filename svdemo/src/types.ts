@@ -7,7 +7,10 @@ export type StarData = {
     parallax: number,
     pseudocolor: string,
     mag: number,
-    coordinates: Position
+    coordinates: Position,
+    discoverer: string|undefined,
+    scientificName: string |undefined
+    givenName: string | undefined
 }
 
 export type Connection = {

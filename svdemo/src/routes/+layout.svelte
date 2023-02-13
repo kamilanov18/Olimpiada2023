@@ -12,7 +12,9 @@
 		NavItem,
 		NavLink,
 		Styles,
-		Button
+		Button,
+		Container,
+		Row
 	} from 'sveltestrap/src';
 	import { page } from '$app/stores';
 
@@ -24,6 +26,8 @@
 </script>
 
 <title>StarIndex</title>
+<Container fluid>
+	<Row>
 <Navbar id="navbar" color="dark" dark expand="md" >
 	<NavbarBrand href="/index">StarIndex</NavbarBrand>
 	<NavbarToggler on:click={() => (isOpen = !isOpen)} />
@@ -64,10 +68,12 @@
 		</Nav>
 	</Collapse>
 </Navbar>
+</Row>
 <Styles />
-<div class="center-items">
+<!-- <div class="center-items"> -->
 	<slot />
-</div>
+</Container>
+<!-- </div> -->
 
 <style>
 	:global(*) {
