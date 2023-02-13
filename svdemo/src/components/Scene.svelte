@@ -56,7 +56,7 @@
         }
         if(val.coordinates.x==0&&val.coordinates.y==0&&val.coordinates.z==0) {
             tweenedOrbitControlTargetCoordinates.set({x:0,y:0,z:0});
-            const res = await fetch(`http://localhost:5173/atlas?isInitial=true`,{method:'GET'});
+            const res = await fetch(`http://localhost:5173/atlas/api/getStars?isInitial=true`,{method:'GET'});
             stars = await res.json();
             isLoadingRender.set(false);
             return;
@@ -65,7 +65,7 @@
         console.log("testetststetst"+targetedStar);
         tweenedOrbitControlTargetCoordinates.set(targetedStar.coordinates);
         
-        const res = await fetch(`http://localhost:5173/atlas?isInitial=false&ra=${targetedStar.rightAscencion}&dec=${targetedStar.declination}&p=${targetedStar.parallax}`,{method:'GET'});
+        const res = await fetch(`http://localhost:5173/atlas/api/getStars?isInitial=false&ra=${targetedStar.rightAscencion}&dec=${targetedStar.declination}&p=${targetedStar.parallax}`,{method:'GET'});
         stars = await res.json();
         console.log(stars.length);
         isLoadingRender.set(false);

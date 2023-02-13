@@ -28,17 +28,11 @@ export const actions: Actions = {
     constellation.name = name as string;
     constellation.discoverer =  locals.user.username;
     console.log(constellation);
-    const testq = {
-      name: 'asd',
-      discoverer: 'Kish',
-      connections: [ { startingStar: [Object], endingStar: [Object] } ],
-      viewedFromStarId: 0
-    };
+    console.log(JSON.stringify(constellation));
     const test = session.run(
-      `WITH apoc.util.compress('{${JSON.stringify(testq)}}', {compression: 'DEFLATE'}) as jsonCompressed
-      CALL apoc.load.json(jsonCompressed, '', {compression: 'DEFLATE'})
-      YIELD value
-      RETURN value`)
+      `
+      WITH {name: 'John', age: 30} AS map
+      RETURN apoc.convert.toJson(map) AS json`)
     console.log((await test).records);
   }
 }

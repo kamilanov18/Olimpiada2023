@@ -35,7 +35,6 @@
     const onClick = (e: CustomEvent<ThreltePointerEvent>) => {
         console.log(isLoadingRenderStatus);
         if(isLoadingRenderStatus) return;
-        isLoadingRender.set(true)
 
         if(isInConstellationCreationMode) {
             if(constellation.connections.length==0) {
@@ -55,6 +54,7 @@
             }
             return;
         }
+        isLoadingRender.set(true)
         console.log("Pointer click: "+starData.id);
         console.log(starData.rightAscencion,starData.declination)
         targetStar.set(starData);

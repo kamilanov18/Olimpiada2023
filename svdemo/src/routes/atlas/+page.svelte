@@ -28,10 +28,6 @@
     .controlls-container {
       padding: auto;
     }
-
-    .visible {
-      visibility: hidden;
-    }
 </style>
 
 <div class="controlls-container">
