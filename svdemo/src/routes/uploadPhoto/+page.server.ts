@@ -11,6 +11,13 @@ export const load: PageServerLoad = async ({ locals }) => {
 		throw redirect(302, 'login');
 	} else {
 		username = locals.user.username;
+
+		if (process.env.NOVA_KEY) {
+			const sessionKey = await fetchAstrometrySessionKey(process.env.NOVA_KEY);
+			console.log(sessionKey);
+			const data=await submitURL(sessionKey, 'https://i.imgur.com/Q5i9bmX.jpg');
+			console.log(data);
+		}
 	}
 };
 const client = new ImgurClient({
@@ -46,6 +53,52 @@ async function uploadToUmgur(file: File) {
 	});
 	console.log(response.data);
 	return response.data;
+}
+
+async function fetchAstrometrySessionKey(apikey: string) {
+	const response = await fetch('http://nova.astrometry.net/api/login', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded'
+		},
+		body: `request-json=${encodeURIComponent(JSON.stringify({ apikey }))}`
+	});
+	const data = await response.json();
+	if (data.status !== 'success') {
+		console.log('Could not obtain session key: ' + data.message);
+	}
+	return data.session;
+}
+
+async function submitURL(sessionId: string, url: string) {
+	const options = {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		body: JSON.stringify({
+			session: sessionId,
+			url: url,
+			scale_units: 'degwidth',
+			scale_lower: 0.5,
+			scale_upper: 1.0,
+			center_ra: 290,
+			center_dec: 11,
+			radius: 2.0
+		})
+	};
+	console.log(options)
+
+	const response = await fetch('http://nova.astrometry.net/api/url_upload', options);
+	const result = await response.json();
+
+	if (result.status === 'success') {
+		console.log(`Successful submission: ${result.subid} with hash ${result.hash}`);
+		return result.subid;
+	} else {
+		console.error(result);
+		return null;
+	}
 }
 
 const upload: Action = async ({ request }) => {
