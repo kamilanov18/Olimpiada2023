@@ -14,9 +14,30 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 		if (process.env.NOVA_KEY) {
 			const sessionKey = await fetchAstrometrySessionKey(process.env.NOVA_KEY);
-			console.log(sessionKey);
-			const data=await submitURL(sessionKey, 'https://i.imgur.com/Q5i9bmX.jpg');
+			const data = await submitURL(sessionKey, 'http://apod.nasa.gov/apod/image/1206/ldn673s_block1123.jpg');
 			console.log(data);
+			const jobResult = await getJobResults(data)
+
+			if (jobResult.status === "success") {
+				console.log(jobResult.tags)
+				if (jobResult.tags.length) {
+					//post to 3d map
+					console.log("found stars");
+
+					const dataFor3dMap = await fetchData(jobResult.tags);
+					const maybeJson=JSON.stringify( dataFor3dMap)
+					console.log(maybeJson);
+
+
+				} else {
+					//no stars found
+					fail(500, { error: false, noStars: true })
+				}
+			} else {
+				//display error 
+				//ask the user to send the image again
+				fail(500, { error: true, noStars: true })
+			}
 		}
 	}
 };
@@ -26,6 +47,49 @@ const client = new ImgurClient({
 	clientSecret: process.env.CLIENT_SECRET,
 	refreshToken: process.env.REFRESH_TOKEN
 });
+
+async function fetchData(starNames: object) {
+
+	let formData="";
+
+	let validStarNames = starNames.filter(starName => {
+		return starName.match(/^\w+\s+\d+.*$/g) || starName.startsWith("The star");
+	});
+	for(let starName in validStarNames){
+		
+		formData+=await setStarNameAndCoordinates(validStarNames[starName],formData)
+	}
+	return formData;
+}
+
+async function setStarNameAndCoordinates(starName:string,formData:string) {
+	if (starName.startsWith("The star")) {
+		starName = starName.slice("The star".length).trim();
+	}
+	starName = starName.replace(/ /g, "+");
+	const res = await fetch("https://cds.unistra.fr/cgi-bin/nph-sesame?" + starName);
+	starName = starName.replace("+", " ");
+	const text = await res.text();
+	const row=getDataRow(text)	
+	
+	
+	return `${starName}:${row}`
+}
+
+
+function getDataRow(text: string): string {
+	let lines = text.split("\n");
+	for (let line of lines) {
+		if (line.startsWith("%J")) {
+			let index = line.indexOf("=");
+
+
+			return line.slice(3, index).trim();
+		}
+	}
+	return "";
+}
+
 
 async function saveURL(url: string) {
 	const connection = await mssqlConnection();
@@ -73,21 +137,21 @@ async function fetchAstrometrySessionKey(apikey: string) {
 async function submitURL(sessionId: string, url: string) {
 	const options = {
 		method: 'POST',
-		headers: {
-			'Content-Type': 'application/x-www-form-urlencoded',
-		},
-		body: JSON.stringify({
-			session: sessionId,
-			url: url,
-			scale_units: 'degwidth',
-			scale_lower: 0.5,
-			scale_upper: 1.0,
-			center_ra: 290,
-			center_dec: 11,
-			radius: 2.0
+		body: new URLSearchParams({
+			"request-json": JSON.stringify({
+				session: sessionId,
+				url: url,
+				scale_units: 'degwidth',
+				scale_lower: 0.5,
+				scale_upper: 1.0,
+				center_ra: 290,
+				center_dec: 11,
+				radius: 2.0
+			})
+
+
 		})
 	};
-	console.log(options)
 
 	const response = await fetch('http://nova.astrometry.net/api/url_upload', options);
 	const result = await response.json();
@@ -99,6 +163,11 @@ async function submitURL(sessionId: string, url: string) {
 		console.error(result);
 		return null;
 	}
+}
+
+async function getJobResults(jobid: string) {
+	const response = await fetch(`https://nova.astrometry.net/api/jobs/${jobid}/info/`);
+	return await response.json();
 }
 
 const upload: Action = async ({ request }) => {
@@ -114,7 +183,7 @@ const upload: Action = async ({ request }) => {
 				if (await saveURL(link)) {
 					return link;
 				} else {
-					fail(500, { error: true });
+					fail(500, { error: true, noStars: false });
 				}
 			}
 		}

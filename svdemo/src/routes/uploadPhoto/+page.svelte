@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Button } from 'sveltestrap/src';
-
+	import type { ActionData } from "./$types"
+	export let form: ActionData;
 	const dropHandler = (ev: DragEvent) => {
 		console.log('File(s) dropped');
 
@@ -52,31 +53,6 @@
 		const result = await response.json();
 		console.log(result);
 	};
-
-
-	// const submitHandler = async (ev: Event) => {
-	// 	ev.preventDefault();
-
-	// 	const file = (document.getElementById('img') as HTMLInputElement).files![0];
-
-	// 	const reader = new FileReader();
-	// 	reader.readAsDataURL(file);
-	// 	reader.onload = async function () {
-	// 		if (typeof reader.result === 'string') {
-	// 			const base64Data = reader.result!.split(',')[1];
-	// 			const formData = new FormData();
-	// 			formData.append('img', base64Data);
-
-	// 			console.log(base64Data);
-	// 			const response = await fetch('/uploadPhoto?/upload', {
-	// 				method: 'POST',
-	// 				body: formData
-	// 			});
-	// 			const result = await response.json();
-	// 			console.log(result);
-	// 		}
-	// 	};
-	// };
 </script>
 <div class="center-items" style="top:10%;position:absolute">
 	<h1>Upload Photo</h1>
@@ -99,6 +75,12 @@
 			<p>Drag one file to this <i>drop zone</i>.</p>
 		</div>
 	</div>
+	{#if form?.error }
+	<Button color="danger"><a href="/uploadPhoto">An error please refresh and upload the photo again</a></Button>
+	{/if}
+	{#if form?.noStars}
+	<Button color="warning"><a href="/uploadPhoto">No stars found. Please refresh and submit again.</a></Button>
+	{/if}
 </div>
 
 <style>
