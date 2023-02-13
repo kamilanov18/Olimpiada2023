@@ -29,7 +29,7 @@
 <Container fluid>
 	<Row>
 <Navbar id="navbar" color="dark" dark expand="md" >
-	<NavbarBrand href="/index">StarIndex</NavbarBrand>
+	<NavbarBrand href="/">StarIndex</NavbarBrand>
 	<NavbarToggler on:click={() => (isOpen = !isOpen)} />
 	<Collapse {isOpen} navbar expand="md" on:update={handleUpdate}>
 		<Nav class="ms-auto" navbar>
@@ -71,7 +71,7 @@
 </Row>
 <Styles />
 <!-- <div class="center-items"> -->
-	<slot />
+	<slot class="center-items" />
 </Container>
 <!-- </div> -->
 

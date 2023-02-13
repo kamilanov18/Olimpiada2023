@@ -12,8 +12,7 @@
   
     
     {#if form?.user}
-      <p class="error">Username/Email is taken.</p>
-
+      <p >Username/Email is taken.</p>
       {:else if form?.user==null}
       <Register></Register>
       

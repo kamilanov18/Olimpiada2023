@@ -7,7 +7,7 @@ import {v4 as uuidv4} from 'uuid';
 export const load: PageServerLoad = async ({ locals }) => {
 	// redirect user if logged in
 	if (locals.user) {
-		throw redirect(302, '/index')
+		throw redirect(302, '/')
 	}
 }
 
@@ -33,15 +33,13 @@ const login: Action = async ({ cookies, request }) => {
     .input("Password",password)
     .execute("CheckPassword");
 
-    console.log(checkPassword);
-    
-    const uuid=uuidv4();
+    console.log(checkPassword.recordset.at(0));
+    if(checkPassword.recordset.at(0).isCorrect===1){
+      const uuid=uuidv4();
     await updateUserRequest
     .input("UserAuthToken",uuid)
     .input("Username",username)
     .query("UPDATE Users SET UserAuthToken=@UserAuthToken WHERE Username=@Username")
-
-    console.log(checkPassword.output);
 
     cookies.set('session', uuid, {
       path: '/',
@@ -52,7 +50,13 @@ const login: Action = async ({ cookies, request }) => {
     })
   
     // redirect the user
-    throw redirect(303, '/index')
+    throw redirect(303, '/')
+    }
+    else{
+      console.log("bad credentials");
+      
+      return fail(401,{user:true})
+    }
   }
 
   
