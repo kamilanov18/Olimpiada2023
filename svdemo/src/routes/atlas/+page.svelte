@@ -17,9 +17,15 @@
 	    height: 100%;
       z-index:-1;
     }
+
+    .controlls-container {
+      padding: auto;
+    }
 </style>
 
-<AtlasUI form={form}/>
+<div class="controlls-container">
+  <AtlasUI form={form}/>
+</div>
 
 <div class="canvas-container">
   <Canvas >

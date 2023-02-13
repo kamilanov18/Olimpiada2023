@@ -4,8 +4,9 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 export const GET = ( async({ url }) => {
+
     const isInitial = url.searchParams.get('isInitial') as string;
-    console.log(isInitial);
+
     if(isInitial==='true')
     {
       const stars = await StellarGenerator.getStarData('SELECT+TOP+2000+source_id,ra,dec,parallax,COALESCE(nu_eff_used_in_astrometry,pseudocolour)+AS+tmp,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+parallax>0.1+ORDER+BY+parallax+DESC');

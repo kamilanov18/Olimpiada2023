@@ -2,9 +2,10 @@
 
   import { enhance } from "$app/forms";
 	import { currentConstellation, isConstellationsVisible, isMakingConstellation, targetStar } from "../stores";
-  import { Button, Card, Col, Input, Row } from "sveltestrap";
+  import { Button, Card, Col, Input, Row, Tooltip } from "sveltestrap";
 	import type { ActionData } from "../routes/atlas/$types";
-	import type { ConstellationData } from "src/types";
+	import type { ConstellationData, StarData } from "src/types";
+	import StarInfo from "./StarInfo.svelte";
 
   export let form: ActionData;
   
@@ -15,6 +16,11 @@
   let displayConstellations = false;
   let isInConstellationCreationMode = false;
   let constellation: ConstellationData;
+  let targetedStar: StarData;
+
+  targetStar.subscribe((val:StarData)=>{
+    targetedStar=val;
+  });
 
   currentConstellation.subscribe((val:ConstellationData)=>{
     constellation=val;
@@ -35,7 +41,7 @@
   }
 
   function resetConstellation() {
-    currentConstellation.set({name:'',discoverer:'',connections:[]});
+    currentConstellation.set({name:'',discoverer:'',connections:[],viewedFromStarId:0});
   }
 </script>
 
@@ -76,10 +82,26 @@
     Mode
   </Button>
   <Card>
-    <!-- <form use:enhance > -->
-      <!-- <Input id='const-name' name='const-name' /> -->
-      <Button color='success'  on:click={generateConstellation} >Submit</Button>
+    <form use:enhance method="POST" action="/atlas?/constellation" >
+      <Input hidden id='const-connections' name='const-connections' value={JSON.stringify(constellation)} />
+      <Input required id='const-name' name='const-name' />
+      <Button type='submit' color='success'  on:click={generateConstellation} >Submit</Button>
       <Button color='danger' on:click={resetConstellation} >Reset</Button>
-    <!-- </form> -->
+    </form>
   </Card>
 </Row>
+<Row>
+  <span id='tutorial'>?</span>
+  <Tooltip target={`tutorial`} >
+    <p>
+      <span>Use the mouse to look around.</span>
+      <span>Scroll / hold scroll button and drag to zoom in or out.</span>
+      <span>Click on stars to navigate towards them.</span>
+      <span>Name stars which have never been clicked on before.</span>
+      <span>Upload images to claim stars in order to make constellations.</span>
+      <span>Claimed stars will appear in different colors.</span>
+      <span>Constellations can be viewed only from the star which they were created from</span>
+    </p>
+  </Tooltip>
+</Row>
+<StarInfo starData={targetedStar} />

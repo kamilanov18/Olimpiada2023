@@ -6,7 +6,7 @@
     export let starData: StarData;
 
     let isInConstellationCreationMode = false;
-    let constellation:ConstellationData = {name:'',discoverer:'',connections:[]};
+    let constellation:ConstellationData = {name:'',discoverer:'',connections:[], viewedFromStarId: 0};
 
     currentConstellation.subscribe((val:ConstellationData)=>{
         constellation=val;

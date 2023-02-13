@@ -18,5 +18,6 @@ export type Connection = {
 export type ConstellationData = {
     name: string,
     discoverer: string,
-    connections: Connection[]
+    connections: Connection[],
+    viewedFromStarId: number
 }

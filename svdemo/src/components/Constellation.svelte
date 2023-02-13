@@ -2,11 +2,14 @@
 	import { Group, Line2 } from "@threlte/core";
 	import type { ConstellationData } from "src/types";
 	import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
+  import { Text } from '@threlte/extras'
 
     export let constellation: ConstellationData;
+    console.log(constellation);
 </script>
 
 <Group >
+  <!-- <Text position={constellation.connections[0].startingStar?.coordinates}>{constellation.name}</Text> -->
     {#each constellation.connections as connection }
         <Line2
             points={[

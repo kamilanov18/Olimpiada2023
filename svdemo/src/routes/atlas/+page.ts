@@ -8,7 +8,8 @@ export const load =  ( async () => {
     {
       name:'test',
       discoverer:'test',
-      connections: [{startingStar:stars[0],endingStar:stars[1]}]
+      connections: [{startingStar:stars[0],endingStar:stars[1]}],
+      viewedFromStarId: 0
     }
   ]
   return {stars,constellations};

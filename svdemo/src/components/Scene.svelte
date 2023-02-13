@@ -19,13 +19,15 @@
     let creatableConstellation: ConstellationData = {
         name:'',
         discoverer:'',
-        connections:[]
+        connections:[],
+        viewedFromStarId: 0
     }
 
     let targetedStar: StarData = {id:0, rightAscencion:0, declination:0, parallax:0,pseudocolor:'',mag:0, coordinates:{x:0,y:0,z:0}};
 
     stars = data.stars;
     constellations = data.constellations;
+    console.log(creatableConstellation);
     
     let tweenedOrbitControlTargetCoordinates = tweened<Position>({x:0,y:0,z:0}, {
         duration:500
@@ -34,7 +36,11 @@
     let orbitControls = {
         enableDamping:true,
         dampingFactor: 0.09,
-        target: {x:0,y:0,z:0}
+        target: {x:0,y:0,z:0},
+        autoRotate:true,
+        autoRotateSpeed:0.3,
+        minDistance: 0.01,
+        maxDistance: 18
     }
 
     let camera = {
@@ -69,6 +75,8 @@
     });
 
     currentConstellation.subscribe((val:ConstellationData)=>{
+        console.log('val');
+        console.log(val);
         creatableConstellation=val;
     })
 </script>
@@ -77,7 +85,6 @@
 
 <HoverCursor />
 <TargetCursor />
-<T.GridHelper />
 
 <Environment path ='./' files={'black_background.png'} isBackground={true} />
 
@@ -85,10 +92,8 @@
     <OrbitControls {...orbitControls} />
 </PerspectiveCamera>
 
+<!-- SUN -->
 <T.Mesh material={new THREE.MeshStandardMaterial({color: 0xffffff,emissive:0xffffff})} geometry={new THREE.SphereGeometry(0.001)} position={[0,0,0]} />
-<T.Mesh material={new THREE.MeshStandardMaterial({color: 0xffff00,emissive:0xffff00})} geometry={new THREE.SphereGeometry(0.1)} position={[0,0,1]}  />
-<T.Mesh material={new THREE.MeshStandardMaterial({color: 0xff00ff,emissive:0xff00ff})} geometry={new THREE.SphereGeometry(0.1)} position={[0,1,0]}  />
-<T.Mesh material={new THREE.MeshStandardMaterial({color: 0x00ffff,emissive:0x00ffff})} geometry={new THREE.SphereGeometry(0.1)} position={[1,0,0]}  />
 
 <InstancedMesh interactive material={new THREE.MeshStandardMaterial({transparent:true,opacity:0, depthWrite: false})} geometry={new THREE.SphereGeometry(1e-1)}>
     {#each stars as star }
