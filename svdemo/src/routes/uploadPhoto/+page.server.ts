@@ -27,7 +27,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 					const dataFor3dMap = await fetchData(jobResult.tags);
 					const maybeJson=JSON.stringify( dataFor3dMap)
 					console.log(maybeJson);
-
+					await fetch(`http://localhost:5173/atlas/api/findStars?dataMap={${maybeJson}},{method:'POST'}`);
 
 				} else {
 					//no stars found
@@ -78,7 +78,7 @@ async function setStarNameAndCoordinates(starName:string,formData:string) {
 
 
 function getDataRow(text: string): string {
-	let lines = text.split("\n");
+	const lines = text.split("\n");
 	for (let line of lines) {
 		if (line.startsWith("%J")) {
 			let index = line.indexOf("=");
