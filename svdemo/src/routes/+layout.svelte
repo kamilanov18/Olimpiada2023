@@ -47,9 +47,13 @@
 				<Login />
 			{/if}
 			{#if $page.data.user}
+			<NavItem>
+				<NavLink href="/atlas">Link to 3D Map</NavLink>
+			</NavItem>
 				<NavItem>
 					<NavLink href="/uploadPhoto">Upload A Photo</NavLink>
 				</NavItem>
+				
 				<NavItem>
 					<form
 						method="POST"

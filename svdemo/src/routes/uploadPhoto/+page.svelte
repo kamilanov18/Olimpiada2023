@@ -54,7 +54,7 @@
 		console.log(result);
 	};
 </script>
-<div class="center-items" style="top:10%;position:absolute">
+<div class="center-items" style="top:10%;position:absolute;">
 	<h1>Upload Photo</h1>
 	<br />
 	<p>Here you can upload a picture of the night sky and identify the stars you have captured.</p>
