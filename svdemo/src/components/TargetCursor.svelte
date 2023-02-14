@@ -15,7 +15,7 @@
         ) ); 
     
         targetCursor.name="targetCursor";
-        targetCursor.scale.set(0.07,0.1,1);
+        targetCursor.scale.set(0.1,0.1,1);
         targetCursor.visible=false;
         scene.add(targetCursor);
     }

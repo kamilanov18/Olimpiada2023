@@ -1,7 +1,7 @@
 import type { Position } from "@threlte/core"
 
 export type StarData = {
-    id: number,
+    id: string,
     rightAscencion: number,
     declination: number,
     parallax: number,

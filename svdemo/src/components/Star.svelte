@@ -42,11 +42,9 @@
             }
             let connection: Connection = constellation.connections[constellation.connections.length-1];
             if(!connection.startingStar) {
-                console.log("zvezda 1");
                 connection.startingStar=starData;
             }
             else if(!connection.endingStar) {
-                console.log("zvezda 2");
                 connection.endingStar=starData;
                 currentConstellation.set(constellation);
             } else {
@@ -56,7 +54,6 @@
         }
         isLoadingRender.set(true)
         console.log("Pointer click: "+starData.id);
-        console.log(starData.rightAscencion,starData.declination)
         targetStar.set(starData);
     }
 </script>

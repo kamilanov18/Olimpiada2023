@@ -4,7 +4,7 @@
     import { Environment } from '@threlte/extras';
     import Star from '../components/Star.svelte';
     import type { ConstellationData, StarData } from 'src/types';
-	import { currentConstellation, isConstellationsVisible, isLoadingRender, targetStar} from '../stores';
+	import { currentConstellation, isBackgroundRotating, isConstellationsVisible, isLoadingRender, targetStar} from '../stores';
     import { tweened } from 'svelte/motion';
 	import HoverCursor from './HoverCursor.svelte';
 	import TargetCursor from './TargetCursor.svelte';
@@ -16,6 +16,7 @@
     let stars: StarData[];
     let displayConstellations = false;
     let constellations: ConstellationData[];
+    
     let creatableConstellation: ConstellationData = {
         name:'',
         discoverer:'',
@@ -23,11 +24,10 @@
         viewedFromStarId: 0
     }
 
-    let targetedStar: StarData = {id:0, rightAscencion:0, declination:0, parallax:0,pseudocolor:'',mag:0, coordinates:{x:0,y:0,z:0},discoverer:undefined,scientificName:undefined,givenName:undefined};
+    let targetedStar: StarData = {id:'0', rightAscencion:0, declination:0, parallax:0,pseudocolor:'',mag:0, coordinates:{x:0,y:0,z:0},discoverer:undefined,scientificName:undefined,givenName:undefined};
 
     stars = data.stars;
     constellations = data.constellations;
-    console.log(creatableConstellation);
     
     let tweenedOrbitControlTargetCoordinates = tweened<Position>({x:0,y:0,z:0}, {
         duration:500
@@ -35,11 +35,12 @@
 
     let orbitControls = {
         enableDamping:true,
+        enablePan:false,
         dampingFactor: 0.09,
         target: {x:0,y:0,z:0},
         autoRotate:true,
         autoRotateSpeed:0.3,
-        minDistance: 0.01,
+        minDistance: 0.05,
         maxDistance: 18
     }
 
@@ -49,20 +50,26 @@
         lookAt: targetedStar.coordinates,
     }
 
+    isBackgroundRotating.subscribe((val:boolean)=>{
+        orbitControls.autoRotate=val;
+    })
+
     targetStar.subscribe(async (val:StarData)=>{
+        
         if(targetedStar.id===val.id) {
             isLoadingRender.set(false); 
             return;
         }
         if(val.coordinates.x==0&&val.coordinates.y==0&&val.coordinates.z==0) {
+            targetedStar={id:'0', rightAscencion:0, declination:0, parallax:0,pseudocolor:'',mag:0, coordinates:{x:0,y:0,z:0},discoverer:undefined,scientificName:undefined,givenName:undefined};
             tweenedOrbitControlTargetCoordinates.set({x:0,y:0,z:0});
             const res = await fetch(`http://localhost:5173/atlas/api/getStars?isInitial=true`,{method:'GET'});
             stars = await res.json();
             isLoadingRender.set(false);
             return;
         }
+        isBackgroundRotating.set(false);
         targetedStar=val;
-        console.log("testetststetst"+targetedStar);
         tweenedOrbitControlTargetCoordinates.set(targetedStar.coordinates);
         
         const res = await fetch(`http://localhost:5173/atlas/api/getStars?isInitial=false&ra=${targetedStar.rightAscencion}&dec=${targetedStar.declination}&p=${targetedStar.parallax}`,{method:'GET'});

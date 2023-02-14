@@ -49,20 +49,22 @@ class StellarGenerator {
         const json = await res.json();
         const stars: StarData[] = [];
         
-        json.data.forEach((info:number[]) => {
-          const star:StarData = {id:0,rightAscencion:0,declination:0,parallax:0,pseudocolor:'',mag:0,coordinates:{x:0,y:0,z:0},discoverer:undefined,scientificName:undefined,givenName:''};
+        for(const info of json.data) {
+          const star:StarData = {id:'',rightAscencion:0,declination:0,parallax:0,pseudocolor:'',mag:0,coordinates:{x:0,y:0,z:0},discoverer:undefined,scientificName:undefined,givenName:''};
       
-          star.id=info[0];
+          star.id=info[0].toString();
           star.rightAscencion=info[1];
           star.declination=info[2];
           star.parallax=info[3];
-          star.pseudocolor= '#ffff70'//StellarGenerator.calculateColor(info[4]);
+          star.pseudocolor= '#ffff70';
           star.mag=info[5];
-          
+          star.scientificName=info[6].toString();          
           star.coordinates=StellarGenerator.get3DCoordinates(star.rightAscencion,star.declination,star.parallax);
+          star.discoverer=undefined;
+          star.givenName=undefined;
       
           stars.push(star);
-        });
+        }
       
         return stars;
       }
@@ -89,9 +91,9 @@ class StellarGenerator {
         }
               
         if(parallax>110)
-          query = 'SELECT+TOP+1000+source_id,ra,dec,parallax,teff_gspphot_upper,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+parallax>0.1+ORDER+BY+parallax+DESC';
+          query = 'SELECT+TOP+2000+source_id,ra,dec,parallax,teff_gspphot_upper,phot_g_mean_mag,designation+FROM+gaiadr3.gaia_source+WHERE+parallax>0.1+ORDER+BY+parallax+DESC';
         else
-          query = `SELECT+source_id,ra,dec,parallax,teff_gspphot_upper,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+1=CONTAINS(POINT(ra,dec),CIRCLE(${rightAscencion},${declination},${figureDegrees}))+AND+parallax+BETWEEN+${parallaxHigherArc}+AND+${parallaxLowerArc}`;
+          query = `SELECT+source_id,ra,dec,parallax,teff_gspphot_upper,phot_g_mean_mag,designation+FROM+gaiadr3.gaia_source+WHERE+1=CONTAINS(POINT(ra,dec),CIRCLE(${rightAscencion},${declination},${figureDegrees}))+AND+parallax+BETWEEN+${parallaxHigherArc}+AND+${parallaxLowerArc}`;
         return query;
     }
 }
